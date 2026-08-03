@@ -1,4 +1,5 @@
 venv/
+.venv/
 __pycache__/
 *.pyc
 *.pyo
@@ -6,4 +7,9 @@ __pycache__/
 dist/
 build/
 .env
-.venv/
+*.log
+local_settings.py
+db.sqlite3
+/media
+/static
+.DS_Store
