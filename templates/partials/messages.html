@@ -1,8 +1,9 @@
 {% if messages %}
-<div class="messages">
+<div class="toast-container" id="toast-container">
     {% for message in messages %}
-        <div class="message message-{{ message.tags }}">
-            {{ message }}
+        <div class="toast toast-{{ message.tags }}" role="alert">
+            <div class="toast-content">{{ message }}</div>
+            <button type="button" class="toast-close" aria-label="Close">&times;</button>
         </div>
     {% endfor %}
 </div>

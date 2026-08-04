@@ -1,10 +1,128 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 
-{% block title %}Home{% endblock %}
+{% block title %}
+Home | Authentication Hub
+{% endblock %}
 
 {% block content %}
-<section class="home-section">
-    <h1>Welcome to Authentication Hub</h1>
-    <p>This is your dashboard.</p>
+<section class="hero-section">
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Authentication Hub</h1>
+            <p class="hero-subtitle">A reusable Django authentication system built for modern web applications.</p>
+
+            <div class="hero-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+                {% else %}
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary">Get Started</a>
+                    <a href="{% url 'accounts:login' %}" class="btn btn-outline">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="features-container">
+        <h2 class="features-title">Features</h2>
+        <p class="features-subtitle">Everything you need for secure user authentication.</p>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F4EC;</div>
+                <h3 class="feature-title">Email Authentication</h3>
+                <p class="feature-description">Users authenticate using their email address instead of usernames, providing a more familiar and modern login experience.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F512;</div>
+                <h3 class="feature-title">Secure Sessions</h3>
+                <p class="feature-description">Built-in session management with secure, persistent login and automatic session expiry for enhanced security.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F464;</div>
+                <h3 class="feature-title">Custom User Profiles</h3>
+                <p class="feature-description">Extendable user model with support for profile pictures, phone numbers, and custom fields tailored to your application.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F512;</div>
+                <h3 class="feature-title">Password Reset</h3>
+                <p class="feature-description feature-coming-soon">Reset forgotten passwords securely via email. <span class="coming-soon-badge">Coming Soon</span></p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#x2709;</div>
+                <h3 class="feature-title">Email Verification</h3>
+                <p class="feature-description feature-coming-soon">Verify user email addresses during registration for trusted accounts. <span class="coming-soon-badge">Coming Soon</span></p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">&#x1F526;</div>
+                <h3 class="feature-title">RESTful API</h3>
+                <p class="feature-description feature-coming-soon">Expose authentication endpoints via a REST API for use in mobile and SPA applications. <span class="coming-soon-badge">Coming Soon</span></p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tech-section">
+    <div class="tech-container">
+        <h2 class="tech-title">Built With</h2>
+        <p class="tech-subtitle">Modern technologies powering this authentication system.</p>
+
+        <div class="tech-grid">
+            <div class="tech-item">
+                <span class="tech-icon">&#128021;</span>
+                <span class="tech-name">Python</span>
+            </div>
+
+            <div class="tech-item">
+                <span class="tech-icon">&#127793;</span>
+                <span class="tech-name">Django</span>
+            </div>
+
+            <div class="tech-item">
+                <span class="tech-icon">&#129658;</span>
+                <span class="tech-name">SQLite</span>
+                <span class="tech-note">(PostgreSQL Ready)</span>
+            </div>
+
+            <div class="tech-item">
+                <span class="tech-icon">&#128274;</span>
+                <span class="tech-name">Django Authentication</span>
+            </div>
+
+            <div class="tech-item">
+                <span class="tech-icon">&#127979;</span>
+                <span class="tech-name">HTML5</span>
+            </div>
+
+            <div class="tech-item">
+                <span class="tech-icon">&#127979;</span>
+                <span class="tech-name">CSS3</span>
+            </div>
+
+            <div class="tech-item">
+                <span class="tech-icon">&#9889;</span>
+                <span class="tech-name">JavaScript</span>
+            </div>
+
+            <div class="tech-item">
+                <span class="tech-icon">&#128172;</span>
+                <span class="tech-name">Git &amp; GitHub</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="footer-cta">
+    <div class="footer-cta-container">
+        <h2 class="footer-cta-title">Ready to Get Started?</h2>
+        <p class="footer-cta-text">Join thousands of developers using Authentication Hub for their projects.</p>
+        <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Create Your Account</a>
+    </div>
 </section>
 {% endblock %}

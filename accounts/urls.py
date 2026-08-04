@@ -14,5 +14,7 @@ app_name = "accounts"
 
 urlpatterns = [
     path("register/", views.register, name="register"),
-    path("login/", TemplateView.as_view(template_name="accounts/login.html"), name="login"),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
+    path("dashboard/", views.dashboard, name="dashboard"),
 ]

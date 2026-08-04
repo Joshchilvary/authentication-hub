@@ -20,9 +20,10 @@
     <a href="#main-content" class="skip-link"> Skip to content </a>
 
     {% include "partials/navbar.html" %}
+    {% include "partials/messages.html" %}
 
     <main id="main-content" class="main-content" role="main">
-      {% include "partials/messages.html" %} {% block content %}{% endblock %}
+      {% block content %}{% endblock %}
     </main>
 
     {% include "partials/footer.html" %}

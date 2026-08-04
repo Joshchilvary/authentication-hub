@@ -16,9 +16,14 @@
             </button>
 
             <div class="navbar-nav" id="navbar-nav">
-                <a href="/" class="navbar-link">Home</a>
-                <a href="#" class="navbar-link">Login</a>
-                <a href="#" class="btn btn-primary navbar-link navbar-link-btn">Register</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'accounts:dashboard' %}" class="navbar-link">Dashboard</a>
+                    <a href="#" class="navbar-link">Profile</a>
+                    <a href="{% url 'accounts:logout' %}" class="navbar-link">Logout</a>
+                {% else %}
+                    <a href="{% url 'accounts:login' %}" class="navbar-link">Login</a>
+                    <a href="{% url 'accounts:register' %}" class="btn btn-primary navbar-link navbar-link-btn">Register</a>
+                {% endif %}
             </div>
         </div>
     </nav>

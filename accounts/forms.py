@@ -1,13 +1,17 @@
 """
 Forms for the custom User model.
 
-Provides registration and admin forms for creating and managing users
+Provides registration, login, and admin forms for creating and managing users
 in both the frontend authentication flow and the Django admin interface.
 """
 
 from django import forms
 from django.contrib.auth.base_user import BaseUserManager
-from django.contrib.auth.forms import UserChangeForm, UserCreationForm
+from django.contrib.auth.forms import (
+    AuthenticationForm,
+    UserChangeForm,
+    UserCreationForm,
+)
 
 from .models import User
 
@@ -122,6 +126,54 @@ class RegistrationForm(UserCreationForm):
         if commit:
             user.save()
         return user
+
+
+class LoginForm(AuthenticationForm):
+    """
+    Form for user login via the frontend.
+
+    Extends Django's AuthenticationForm to support email-based authentication
+    with the custom User model. Overrides the username field to use an
+    EmailField for proper HTML5 validation, while inheriting all built-in
+    authentication and credential-checking logic.
+    """
+
+    username = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                "class": FORM_CONTROL_CLASS,
+                "placeholder": "Enter your email address",
+                "autocomplete": "email",
+                "autofocus": True,
+            }
+        ),
+        label="Email Address",
+    )
+    password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(
+            attrs={
+                "class": FORM_CONTROL_CLASS,
+                "placeholder": "Enter your password",
+                "autocomplete": "current-password",
+            }
+        ),
+        label="Password",
+    )
+
+    def clean_username(self):
+        """
+        Normalize the email before authentication.
+
+        Strips surrounding whitespace and converts the email to lowercase
+        to ensure case-insensitive matching against the User model's
+        email field.
+        """
+        username = self.cleaned_data.get("username")
+        if username:
+            username = username.strip().lower()
+        return username
 
 
 class UserAdminCreationForm(UserCreationForm):

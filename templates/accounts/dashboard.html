@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="dashboard-section">
+    <div class="dashboard-container">
+        <div class="dashboard-welcome">
+            <h1>Welcome Back, {{ user.first_name|default:"User" }}!</h1>
+            <p class="dashboard-subtitle">Here are your account details.</p>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="dashboard-card-body">
+                <div class="dashboard-info-row">
+                    <span class="dashboard-info-label">Email</span>
+                    <span class="dashboard-info-value">{{ user.email }}</span>
+                </div>
+
+                <div class="dashboard-info-row">
+                    <span class="dashboard-info-label">Phone Number</span>
+                    <span class="dashboard-info-value">{{ user.phone_number|default:"Not provided" }}</span>
+                </div>
+
+                <div class="dashboard-info-row">
+                    <span class="dashboard-info-label">Member Since</span>
+                    <span class="dashboard-info-value">{{ user.created_at|date:"F j, Y" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
