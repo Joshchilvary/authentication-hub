@@ -9,26 +9,30 @@ Dashboard | Authentication Hub
     <div class="dashboard-container">
         <div class="dashboard-welcome">
             <h1>Welcome Back, {{ user.first_name|default:"User" }}!</h1>
-            <p class="dashboard-subtitle">Here are your account details.</p>
+            <p class="dashboard-subtitle">Here are quick links to manage your account.</p>
         </div>
-
-        <div class="dashboard-card">
-            <div class="dashboard-card-body">
-                <div class="dashboard-info-row">
-                    <span class="dashboard-info-label">Email</span>
-                    <span class="dashboard-info-value">{{ user.email }}</span>
+        <div class="dashboard-grid">
+            <a href="{% url 'accounts:profile' %}" class="dashboard-card-link">
+                <div class="dashboard-icon">
+                    <i class="fa-solid fa-user" aria-hidden="true"></i>
                 </div>
-
-                <div class="dashboard-info-row">
-                    <span class="dashboard-info-label">Phone Number</span>
-                    <span class="dashboard-info-value">{{ user.phone_number|default:"Not provided" }}</span>
+                <h3>View Profile</h3>
+                <p>See your personal information and verification status.</p>
+            </a>
+            <a href="{% url 'accounts:edit_profile' %}" class="dashboard-card-link">
+                <div class="dashboard-icon">
+                    <i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>
                 </div>
-
-                <div class="dashboard-info-row">
-                    <span class="dashboard-info-label">Member Since</span>
-                    <span class="dashboard-info-value">{{ user.created_at|date:"F j, Y" }}</span>
+                <h3>Edit Profile</h3>
+                <p>Update your name, phone, bio, and profile picture.</p>
+            </a>
+            <a href="{% url 'accounts:settings' %}" class="dashboard-card-link">
+                <div class="dashboard-icon">
+                    <i class="fa-solid fa-gear" aria-hidden="true"></i>
                 </div>
-            </div>
+                <h3>Account Settings</h3>
+                <p>Manage security, password, and account preferences.</p>
+            </a>
         </div>
     </div>
 </section>

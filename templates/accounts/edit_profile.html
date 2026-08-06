@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Edit Profile | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="profile-container">
+        <article class="profile-card">
+            <header class="profile-header">
+                <h1 class="profile-title">Edit Your Profile</h1>
+                <p class="profile-subtitle">Keep your personal information up to date.</p>
+            </header>
+
+            <div class="profile-body">
+                <form method="post" enctype="multipart/form-data" novalidate>
+                    {% csrf_token %}
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="{{ form.first_name.id_for_label }}"><i class="fa-solid fa-user" aria-hidden="true"></i> {{ form.first_name.label }}</label>
+                            {{ form.first_name }}
+                            {% if form.first_name.errors %}
+                                <ul class="field-errors">
+                                    {% for error in form.first_name.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.last_name.id_for_label }}"><i class="fa-solid fa-user" aria-hidden="true"></i> {{ form.last_name.label }}</label>
+                            {{ form.last_name }}
+                            {% if form.last_name.errors %}
+                                <ul class="field-errors">
+                                    {% for error in form.last_name.errors %}
+                                        <li>{{ error }}</li>
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.phone_number.id_for_label }}"><i class="fa-solid fa-phone" aria-hidden="true"></i> {{ form.phone_number.label }}</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <ul class="field-errors">
+                                {% for error in form.phone_number.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label for="{{ form.bio.id_for_label }}"><i class="fa-solid fa-align-left" aria-hidden="true"></i> {{ form.bio.label }}</label>
+                        {{ form.bio }}
+                        {% if form.bio.errors %}
+                            <ul class="field-errors">
+                                {% for error in form.bio.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="photo-upload">
+                            <div class="photo-upload-preview">
+                                {% if user.profile_picture %}
+                                    <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}'s Profile Picture" class="photo-upload-image">
+                                {% else %}
+                                    <div class="photo-upload-placeholder">
+                                        <span class="photo-upload-initials">{{ user.first_name|default:"?"|first }}{{ user.last_name|default:"?"|first }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                            <div class="photo-upload-actions">
+                                <label for="id_profile_picture" class="btn btn-outline"><i class="fa-solid fa-camera" aria-hidden="true"></i> Change Photo</label>
+                                <span class="photo-upload-filename" id="photo-filename">No file chosen</span>
+                                <input type="file" name="profile_picture" id="id_profile_picture" class="visually-hidden" accept=".jpg,.jpeg,.png,.webp">
+                            </div>
+                        </div>
+                        {% if form.profile_picture.errors %}
+                            <ul class="field-errors">
+                                {% for error in form.profile_picture.errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check" aria-hidden="true"></i> Save Changes</button>
+                        <a href="{% url 'accounts:profile' %}" class="btn btn-outline">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </article>
+    </div>
+</section>
+{% endblock %}

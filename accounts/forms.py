@@ -5,6 +5,8 @@ Provides registration, login, and admin forms for creating and managing users
 in both the frontend authentication flow and the Django admin interface.
 """
 
+import os
+
 from django import forms
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.forms import (
@@ -16,6 +18,8 @@ from django.contrib.auth.forms import (
 from .models import User
 
 FORM_CONTROL_CLASS = "form-control"
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+MAX_FILE_SIZE = 2 * 1024 * 1024
 
 
 class RegistrationForm(UserCreationForm):
@@ -198,3 +202,99 @@ class UserAdminChangeForm(UserChangeForm):
     class Meta:
         model = User
         fields = "__all__"
+
+
+class ProfileUpdateForm(forms.ModelForm):
+    """
+    Form for users to update their profile information.
+
+    Bound to the custom User model and includes only editable fields
+    (first_name, last_name, phone_number, bio, profile_picture).
+    Excludes sensitive and system-managed fields such as email,
+    password, is_verified, is_staff, is_superuser, created_at, and updated_at.
+    """
+
+    first_name = forms.CharField(
+        required=True,
+        max_length=150,
+        widget=forms.TextInput(
+            attrs={
+                "class": FORM_CONTROL_CLASS,
+                "placeholder": "Enter your first name",
+            }
+        ),
+        label="First Name",
+    )
+    last_name = forms.CharField(
+        required=True,
+        max_length=150,
+        widget=forms.TextInput(
+            attrs={
+                "class": FORM_CONTROL_CLASS,
+                "placeholder": "Enter your last name",
+            }
+        ),
+        label="Last Name",
+    )
+    phone_number = forms.CharField(
+        required=False,
+        max_length=20,
+        widget=forms.TextInput(
+            attrs={
+                "class": FORM_CONTROL_CLASS,
+                "placeholder": "Enter your phone number",
+            }
+        ),
+        label="Phone Number",
+    )
+    bio = forms.CharField(
+        required=False,
+        widget=forms.Textarea(
+            attrs={
+                "class": f"{FORM_CONTROL_CLASS} textarea-lg",
+                "placeholder": "Tell us about yourself",
+                "rows": 5,
+            }
+        ),
+        label="Biography",
+    )
+    profile_picture = forms.ImageField(
+        required=False,
+        widget=forms.ClearableFileInput(
+            attrs={
+                "class": "visually-hidden",
+            }
+        ),
+        label="Profile Picture",
+        help_text="Upload a JPG, JPEG, PNG, or WebP image (max 2 MB).",
+    )
+
+    class Meta:
+        model = User
+        fields = ("first_name", "last_name", "phone_number", "bio", "profile_picture")
+
+    def clean_profile_picture(self):
+        """
+        Validate the uploaded profile picture.
+
+        If no image is uploaded, return the current value without error.
+        Only allows jpg, jpeg, png, and webp file extensions.
+        Limits uploads to 2 MB.
+        """
+        uploaded_file = self.cleaned_data.get("profile_picture")
+
+        if not uploaded_file:
+            return self.instance.profile_picture
+
+        ext = os.path.splitext(uploaded_file.name)[1].lower().lstrip(".")
+        if ext not in ALLOWED_EXTENSIONS:
+            raise forms.ValidationError(
+                "Only JPG, JPEG, PNG, and WebP files are allowed."
+            )
+
+        if uploaded_file.size > MAX_FILE_SIZE:
+            raise forms.ValidationError(
+                "The uploaded file exceeds the 2 MB size limit."
+            )
+
+        return uploaded_file

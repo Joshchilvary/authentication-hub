@@ -7,11 +7,15 @@ authentication system.
 """
 
 from django.contrib import messages
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordChangeView
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, ProfileUpdateForm, RegistrationForm
 
 
 def register(request):
@@ -106,3 +110,113 @@ def logout_view(request):
     logout(request)
     messages.success(request, "You have been logged out successfully.")
     return redirect("accounts:login")
+
+
+@login_required
+def profile(request):
+    """
+    Display the authenticated user's profile information.
+
+    Only authenticated users can access this view. If a user is not
+    authenticated, Django's @login_required decorator automatically
+    redirects them to the login page.
+
+    Uses request.user to avoid an unnecessary database query since the
+    user is already available in the request object after authentication.
+
+    Args:
+        request: The HTTP request object containing the authenticated user.
+
+    Returns:
+        HttpResponse: Rendered profile template with the user object.
+    """
+    return render(request, "accounts/profile.html", {"user": request.user})
+
+
+@login_required
+def edit_profile(request):
+    """
+    Allow the authenticated user to update their profile information.
+
+    Only authenticated users can access this view. If a user is not
+    authenticated, Django's @login_required decorator automatically
+    redirects them to the login page.
+
+    On GET: Display a form pre-filled with the user's current profile data.
+    On POST: Validate the submitted form with both request.POST and
+             request.FILES (required for file uploads like profile pictures),
+             save the updated profile if valid, display a success message,
+             and redirect back to the profile page. If the form is invalid,
+             redisplay the form with validation errors.
+
+    instance=request.user is passed to the form so that the form loads
+    the existing user data for editing and updates the same user instance
+    rather than creating a new one.
+
+    request.FILES is passed to the form to handle file uploads, specifically
+    the profile_picture field which uses a ClearableFileInput widget.
+    Without request.FILES, uploaded files would be silently ignored.
+
+    Args:
+        request: The HTTP request object containing the authenticated user
+                 and optional uploaded files.
+
+    Returns:
+        HttpResponse: Rendered edit profile template with the form, or
+                      a redirect to the profile page on success.
+    """
+    if request.method == "POST":
+        form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Your profile has been updated successfully.")
+            return redirect("accounts:profile")
+        else:
+            messages.error(request, "Please correct the errors below and try again.")
+    else:
+        form = ProfileUpdateForm(instance=request.user)
+
+    return render(request, "accounts/edit_profile.html", {"form": form})
+
+
+class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
+    """
+    View for authenticated users to change their password.
+
+    Uses Django's built-in PasswordChangeForm for validation.
+    Calls update_session_auth_hash() to keep the user logged in
+    after the password change.
+    Displays a success message and redirects to the profile page.
+    """
+
+    template_name = "accounts/change_password.html"
+    form_class = PasswordChangeForm
+    success_url = reverse_lazy("accounts:profile")
+
+    def form_valid(self, form):
+        """
+        Save the new password, update the session auth hash,
+        display a success message, and redirect to the profile page.
+        """
+        user = form.save()
+        update_session_auth_hash(self.request, user)
+        messages.success(self.request, "Your password has been changed successfully.")
+        return super().form_valid(form)
+
+
+@login_required
+def settings_view(request):
+    """
+    Render the account settings page.
+
+    Only authenticated users can access this view. Groups
+    account management options into cards for Profile, Security,
+    Profile Picture, and Danger Zone.
+
+    Args:
+        request: The HTTP request object containing the authenticated user.
+
+    Returns:
+        HttpResponse: Rendered settings template with the user object.
+    """
+    return render(request, "accounts/settings.html", {"user": request.user})

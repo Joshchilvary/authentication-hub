@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Account Settings | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+        <div class="settings-container">
+            <div class="profile-header">
+                <h1 class="profile-title">Account Settings</h1>
+                <p class="profile-subtitle">Manage your security and account preferences.</p>
+            </div>
+            <div class="settings-grid">
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                        Security
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    <div class="settings-info-row">
+                        <span class="settings-info-label">Password Status</span>
+                        <span class="settings-info-value">
+                            <span class="badge badge-success"><i class="fa-solid fa-lock" aria-hidden="true"></i> Protected</span>
+                        </span>
+                    </div>
+                    <div class="settings-info-row">
+                        <span class="settings-info-label">Email Verification</span>
+                        <span class="settings-info-value">
+                            {% if user.is_verified %}
+                                <span class="badge badge-success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Verified</span>
+                            {% else %}
+                                <span class="badge badge-warning"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Not Verified</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="settings-info-row">
+                        <span class="settings-info-label">Account Status</span>
+                        <span class="settings-info-value">
+                            <span class="badge badge-success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Active</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:password_change' %}" class="btn btn-primary">
+                        <i class="fa-solid fa-key" aria-hidden="true"></i> Change Password
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-image" aria-hidden="true"></i>
+                        Profile Picture
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    <div class="settings-avatar">
+                        {% if user.profile_picture %}
+                            <img src="{{ user.profile_picture.url }}" alt="{{ user.first_name }}'s Profile Picture" class="settings-avatar-image">
+                        {% else %}
+                            <div class="settings-avatar-placeholder">
+                                <span class="settings-avatar-initials">{{ user.first_name|default:"?"|first }}{{ user.last_name|default:"?"|first }}</span>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:edit_profile' %}" class="btn btn-primary">
+                        <i class="fa-solid fa-pen" aria-hidden="true"></i> Edit Profile
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card settings-card-danger">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                        Danger Zone
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    <p class="settings-danger-text">Once you delete your account, there is no going back. Please be certain.</p>
+                </div>
+                <div class="settings-card-footer">
+                    <button type="button" class="btn btn-outline-danger" disabled>
+                        Delete Account <span class="badge badge-outline">Coming Soon</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
