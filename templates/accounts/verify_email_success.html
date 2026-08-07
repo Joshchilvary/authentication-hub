@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+Email Verified | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card">
+        <div class="auth-header" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: var(--spacing-md);">&#x2705;</div>
+            <h1>Email Verified</h1>
+            <p class="auth-subtitle">Your email address has been successfully verified.</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="auth-redirect">
+            <a href="{% url 'accounts:login' %}">Continue to Login</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

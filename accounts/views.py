@@ -1,21 +1,76 @@
 """
 Views for the accounts app.
 
-Handles user registration, authentication, dashboard, and logout
-using the custom User model with email-based login via Django's
-authentication system.
+Handles user registration, authentication, dashboard, logout,
+and email verification using Django's token generation utilities.
 """
 
 from django.contrib import messages
-from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth import login, logout, update_session_auth_hash, get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import PasswordChangeForm
-from django.contrib.auth.views import PasswordChangeView
+from django.contrib.auth.views import PasswordChangeView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
 from django.shortcuts import render, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 
 from .forms import LoginForm, ProfileUpdateForm, RegistrationForm
+from .tokens import email_verification_token
+
+
+class CustomPasswordResetView(PasswordResetView):
+    """
+    Custom password reset view.
+
+    Uses Django's built-in PasswordResetView with custom templates
+    for the form and email. Ensures the user is not logged in during
+    the reset process and does not reveal whether an email exists.
+    """
+
+    template_name = "accounts/password_reset.html"
+    email_template_name = "accounts/emails/password_reset_email.html"
+    subject_template_name = "accounts/emails/password_reset_subject.txt"
+    success_url = reverse_lazy("accounts:password_reset_done")
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    """
+    Password reset done view.
+
+    Displays a generic message without revealing whether the supplied
+    email address exists in the database.
+    """
+
+    template_name = "accounts/password_reset_done.html"
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    """
+    Custom password reset confirmation view.
+
+    Uses Django's built-in SetPasswordForm and token validation.
+    Renders a custom confirmation template and redirects to the
+    complete page on success. Shows a dedicated error page when
+    the reset token is invalid, expired, or has already been used.
+    """
+
+    template_name = "accounts/password_reset_confirm.html"
+    success_url = reverse_lazy("accounts:password_reset_complete")
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    """
+    Password reset complete view.
+
+    Displays a success message and a link to the login page.
+    """
+
+    template_name = "accounts/password_reset_complete.html"
 
 
 def register(request):
@@ -24,7 +79,9 @@ def register(request):
 
     On GET: Display an empty registration form.
     On POST: Validate the submitted form, create a new user if valid,
-             and redirect to the login page with a success message.
+             send an email verification link, and redirect to the login
+             page with a success message. The user is NOT logged in
+             automatically.
 
     Returns:
         HttpResponse: Rendered registration template or redirect to login.
@@ -32,8 +89,28 @@ def register(request):
     if request.method == "POST":
         form = RegistrationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Your account has been created successfully. Please log in.")
+            user = form.save()
+            user.is_verified = False
+            user.save()
+
+            current_site = get_current_site(request)
+            subject = "Verify your email address"
+            message = render_to_string("accounts/emails/verify_email.html", {
+                "user": user,
+                "domain": current_site.domain,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": email_verification_token.make_token(user),
+            })
+
+            send_mail(
+                subject=subject,
+                message=message,
+                from_email=None,
+                recipient_list=[user.email],
+                html_message=message,
+            )
+
+            messages.success(request, "Your account has been created successfully. Please check your email to verify your account.")
             return redirect("accounts:login")
     else:
         form = RegistrationForm()
@@ -220,3 +297,75 @@ def settings_view(request):
         HttpResponse: Rendered settings template with the user object.
     """
     return render(request, "accounts/settings.html", {"user": request.user})
+
+
+def verify_email(request, uidb64, token):
+    """
+    Verify a user's email address using a time-limited token.
+
+    Decodes the user ID from the URL, validates the token, sets
+    is_verified=True, and redirects to the login page with a success
+    message. If the token is invalid or expired, renders an error page.
+
+    Args:
+        request: The HTTP request object.
+        uidb64: Base64-encoded user primary key.
+        token: Email verification token.
+
+    Returns:
+        HttpResponse: Redirect to login on success, or rendered
+                      invalid token template on failure.
+    """
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+        user = get_user_model().objects.get(pk=uid)
+    except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+        user = None
+
+    if user is not None and email_verification_token.check_token(user, token):
+        user.is_verified = True
+        user.save()
+        messages.success(request, "Your email has been verified successfully. You can now log in.")
+        return redirect("accounts:login")
+    else:
+        return render(request, "accounts/verify_email_invalid.html")
+
+
+@login_required
+def resend_verification(request):
+    """
+    Resend the email verification link to the current user.
+
+    Only authenticated users can access this view. Generates a new
+    token and sends a fresh verification email.
+
+    Args:
+        request: The HTTP request object containing the authenticated user.
+
+    Returns:
+        HttpResponse: Redirect to dashboard with a success or error message.
+    """
+    user = request.user
+    if user.is_verified:
+        messages.info(request, "Your email is already verified.")
+        return redirect("accounts:dashboard")
+
+    current_site = get_current_site(request)
+    subject = "Verify your email address"
+    message = render_to_string("accounts/emails/verify_email.html", {
+        "user": user,
+        "domain": current_site.domain,
+        "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+        "token": email_verification_token.make_token(user),
+    })
+
+    send_mail(
+        subject=subject,
+        message=message,
+        from_email=None,
+        recipient_list=[user.email],
+        html_message=message,
+    )
+
+    messages.success(request, "A new verification email has been sent. Please check your inbox.")
+    return redirect("accounts:dashboard")

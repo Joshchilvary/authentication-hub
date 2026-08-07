@@ -1,5 +1,15 @@
 {% load static %}
 <header class="site-header">
+    {% if user.is_authenticated and not user.is_verified %}
+        <div class="verification-banner" id="verification-banner" role="alert">
+            <div class="verification-banner-content">
+                <i class="fa-solid fa-circle-exclamation" aria-hidden="true"></i>
+                <span>Your email address is not verified.</span>
+                <a href="{% url 'accounts:resend_verification' %}" class="btn btn-sm btn-primary verification-banner-btn">Resend Verification Email</a>
+                <button class="verification-banner-close" id="verification-banner-close" aria-label="Dismiss notification">&times;</button>
+            </div>
+        </div>
+    {% endif %}
     <nav class="navbar">
         <div class="navbar-container">
             <div class="navbar-brand">

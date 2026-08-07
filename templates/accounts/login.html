@@ -47,6 +47,10 @@ Login | Authentication Hub
                 {% endif %}
             </div>
 
+            <div class="forgot-password-row">
+                <a href="{% url 'accounts:password_reset' %}" class="forgot-password-link">Forgot your password?</a>
+            </div>
+
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary btn-block">Log In</button>
             </div>
