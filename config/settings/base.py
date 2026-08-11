@@ -25,6 +25,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'accounts.middleware.IdleSessionTimeoutMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -79,6 +80,25 @@ AUTH_USER_MODEL = 'accounts.User'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'accounts:login'
+
+# Session configuration
+# SESSION_COOKIE_AGE: Duration of persistent sessions in seconds.
+# Default: 1209600 (2 weeks). Override with the SESSION_COOKIE_AGE env var.
+# When Remember Me is checked, Django uses this cookie age.
+# When Remember Me is unchecked, the session is set to expire on browser close.
+SESSION_COOKIE_AGE = int(os.environ.get('SESSION_COOKIE_AGE', 1209600))
+# Do not refresh session expiry on every request.
+# Session expiry is fixed at login time based on Remember Me choice.
+SESSION_SAVE_EVERY_REQUEST = False
+
+# Idle session timeout
+# IDLE_SESSION_TIMEOUT: Maximum inactivity duration in seconds before
+# the user is automatically logged out. Default: 300 (5 minutes).
+# Override with the IDLE_SESSION_TIMEOUT environment variable.
+# This applies regardless of the Remember Me choice.
+# Remember Me controls persistence across browser sessions;
+# idle timeout limits the maximum inactive session duration.
+IDLE_SESSION_TIMEOUT = int(os.environ.get("IDLE_SESSION_TIMEOUT", 300))
 
 SITE_ID = 1
 

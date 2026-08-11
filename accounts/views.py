@@ -17,7 +17,7 @@ from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode, url_has_allowed_host_and_scheme
 
 from .forms import LoginForm, ProfileUpdateForm, RegistrationForm
 from .tokens import email_verification_token
@@ -136,15 +136,24 @@ def login_view(request):
     if request.user.is_authenticated:
         return redirect("accounts:dashboard")
 
-    redirect_url = request.GET.get("next", "accounts:dashboard")
+    redirect_url = request.GET.get("next")
+    if redirect_url and not url_has_allowed_host_and_scheme(
+        url=redirect_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        redirect_url = None
 
     if request.method == "POST":
         form = LoginForm(request, data=request.POST)
         if form.is_valid():
             user = form.get_user()
+            remember_me = form.cleaned_data.get("remember_me")
             login(request, user)
+            if not remember_me:
+                request.session.set_expiry(0)
             messages.success(request, "You have been logged in successfully.")
-            return redirect(redirect_url)
+            return redirect(redirect_url or "accounts:dashboard")
     else:
         form = LoginForm()
 

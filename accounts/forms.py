@@ -165,6 +165,11 @@ class LoginForm(AuthenticationForm):
         ),
         label="Password",
     )
+    remember_me = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        label="Remember me",
+    )
 
     def clean_username(self):
         """
