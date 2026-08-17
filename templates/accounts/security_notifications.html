@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Security Notifications | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <h1 class="profile-name">Security Notifications</h1>
+                <p class="profile-subtitle">Review your recent security alerts and account events.</p>
+            </div>
+
+            <div class="notifications-body">
+                {% if page_obj %}
+                    {% if page_obj.paginator.count > 1 %}
+                    <form method="post" action="{% url 'accounts:mark_all_notifications_read' %}" style="margin-bottom: 1rem;" onsubmit="return confirm('Mark all notifications as read?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-secondary">Mark all as read</button>
+                    </form>
+                    {% endif %}
+                    <div class="notifications-table-wrapper">
+                        <table class="login-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Notification</th>
+                                    <th>Date / Time</th>
+                                    <th>Browser</th>
+                                    <th>Operating System</th>
+                                    <th>Device</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for notification in page_obj %}
+                                    <tr class="{% if not notification.is_read %}notification-unread{% endif %}">
+                                        <td>
+                                            {% if notification.is_read %}
+                                                <span class="badge badge-outline">Read</span>
+                                            {% else %}
+                                                <span class="badge badge-success">Unread</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <strong>{{ notification.title }}</strong>
+                                            <p class="notification-message">{{ notification.message }}</p>
+                                            <form method="post" action="{% url 'accounts:mark_notification_read' notification.id %}" style="margin-top: 0.5rem;">
+                                                {% csrf_token %}
+                                                <button type="submit" class="btn btn-sm btn-secondary">Mark as read</button>
+                                            </form>
+                                        </td>
+                                        <td>{{ notification.created_at|date:"M d, Y H:i" }}</td>
+                                        <td>{{ notification.browser|default:"—" }}</td>
+                                        <td>{{ notification.operating_system|default:"—" }}</td>
+                                        <td>{{ notification.device_info|default:"—" }}</td>
+                                        <td>{{ notification.ip_address|default:"—" }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if page_obj.has_other_pages %}
+                        <div class="login-history-pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary btn-sm">&laquo; Previous</a>
+                            {% endif %}
+                            <span class="login-history-page-info">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary btn-sm">Next &raquo;</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="login-history-empty">
+                        <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                        <p>No security notifications yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

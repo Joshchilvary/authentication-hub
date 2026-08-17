@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Security Dashboard | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="settings-container">
+        <div class="profile-header">
+            <h1 class="profile-title">Security Dashboard</h1>
+            <p class="profile-subtitle">Monitor and manage your account security.</p>
+        </div>
+        <div class="settings-grid">
+
+            <div class="settings-card settings-card-danger">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                        Emergency Security
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    <p class="settings-info-text">
+                        If you believe someone has accessed your account without authorization, you can immediately secure your account by revoking all active sessions.
+                    </p>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:emergency_security' %}" class="btn btn-danger">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure My Account
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-lock" aria-hidden="true"></i>
+                        Password
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    <div class="settings-info-row">
+                        <span class="settings-info-label">Status</span>
+                        <span class="settings-info-value">
+                            <span class="badge badge-success"><i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Protected</span>
+                        </span>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:password_change' %}" class="btn btn-primary">
+                        <i class="fa-solid fa-key" aria-hidden="true"></i> Change Password
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-desktop" aria-hidden="true"></i>
+                        Active Sessions
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    <div class="settings-info-row">
+                        <span class="settings-info-label">Current Sessions</span>
+                        <span class="settings-info-value">
+                            <span class="badge badge-{% if active_sessions_count > 1 %}warning{% else %}success{% endif %}">
+                                {{ active_sessions_count }}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:active_sessions' %}" class="btn btn-secondary">
+                        <i class="fa-solid fa-list" aria-hidden="true"></i> Manage Active Sessions
+                    </a>
+                    {% if active_sessions_count > 1 %}
+                    <form method="post" action="{% url 'accounts:logout_other_sessions' %}" style="display: inline;" onsubmit="return confirm('Are you sure you want to log out all other devices?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger">
+                            <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out all other devices
+                        </button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        Login Activity
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    {% if latest_login %}
+                        <div class="settings-info-row">
+                            <span class="settings-info-label">Last Successful Login</span>
+                        </div>
+                        <div class="settings-details">
+                            <p><strong>Date/Time:</strong> {{ latest_login.timestamp|date:"M d, Y H:i" }}</p>
+                            <p><strong>Browser:</strong> {{ latest_login.browser|default:"—" }}</p>
+                            <p><strong>Operating System:</strong> {{ latest_login.operating_system|default:"—" }}</p>
+                            <p><strong>Device:</strong> {{ latest_login.device_info|default:"—" }}</p>
+                            <p><strong>IP Address:</strong> {{ latest_login.ip_address|default:"—" }}</p>
+                        </div>
+                    {% else %}
+                        <p class="settings-empty-text">No login activity recorded yet.</p>
+                    {% endif %}
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:login_history' %}" class="btn btn-secondary">
+                        <i class="fa-solid fa-list" aria-hidden="true"></i> View Login History
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+                        Security Notifications
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    {% if unread_notification_count > 0 %}
+                        <div class="settings-info-row">
+                            <span class="settings-info-label">Unread Alerts</span>
+                            <span class="settings-info-value">
+                                <span class="badge badge-warning">{{ unread_notification_count }}</span>
+                            </span>
+                        </div>
+                        <p class="settings-info-text">You have unread security notifications.</p>
+                    {% else %}
+                        <p class="settings-empty-text">No unread security notifications.</p>
+                    {% endif %}
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:security_notifications' %}" class="btn btn-secondary">
+                        <i class="fa-solid fa-list" aria-hidden="true"></i> View Security Notifications
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-gauge-high" aria-hidden="true"></i>
+                        Security Risk
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    {% if latest_risk_assessment %}
+                        <div class="settings-info-row">
+                            <span class="settings-info-label">Current Risk Status</span>
+                            <span class="settings-info-value">
+                                {% if latest_risk_assessment.risk_level == 'low' %}
+                                    <span class="badge badge-success">LOW</span>
+                                {% elif latest_risk_assessment.risk_level == 'medium' %}
+                                    <span class="badge badge-warning">MEDIUM</span>
+                                {% elif latest_risk_assessment.risk_level == 'high' %}
+                                    <span class="badge badge-warning">HIGH</span>
+                                {% else %}
+                                    <span class="badge badge-error">CRITICAL</span>
+                                {% endif %}
+                            </span>
+                        </div>
+                        <p class="settings-info-text">Risk score: {{ latest_risk_assessment.risk_score }}/100</p>
+                        {% if latest_risk_assessment.risk_reasons %}
+                        <div class="settings-details">
+                            <p><strong>Reasons:</strong></p>
+                            <ul>
+                                {% for reason in latest_risk_assessment_risk_reasons %}
+                                    <li>{{ reason }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <p class="settings-empty-text">No risk assessment available yet.</p>
+                    {% endif %}
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:login_history' %}" class="btn btn-secondary">
+                        <i class="fa-solid fa-list" aria-hidden="true"></i> View Login History
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                        Security Alerts
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    {% if latest_new_device_login %}
+                        <div class="settings-alert">
+                            <div class="settings-alert-header">
+                                <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                                New login detected
+                            </div>
+                            <p class="settings-alert-text">
+                                A new device or browser was used to log in to your account on <strong>{{ latest_new_device_login.timestamp|date:"M d, Y H:i" }}</strong>.
+                            </p>
+                            <p><strong>Browser:</strong> {{ latest_new_device_login.browser|default:"—" }}</p>
+                            <p><strong>Operating System:</strong> {{ latest_new_device_login.operating_system|default:"—" }}</p>
+                            <p><strong>Device:</strong> {{ latest_new_device_login.device_info|default:"—" }}</p>
+                            <p><strong>IP Address:</strong> {{ latest_new_device_login.ip_address|default:"—" }}</p>
+                        </div>
+                    {% else %}
+                        <p class="settings-empty-text">No new login alerts.</p>
+                    {% endif %}
+                </div>
+                <div class="settings-card-footer">
+                    <a href="{% url 'accounts:login_history' %}" class="btn btn-secondary">
+                        <i class="fa-solid fa-list" aria-hidden="true"></i> View Login History
+                    </a>
+                </div>
+            </div>
+
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <h2 class="settings-card-title">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                        Email Verification
+                    </h2>
+                </div>
+                <div class="settings-card-body">
+                    <div class="settings-info-row">
+                        <span class="settings-info-label">Status</span>
+                        <span class="settings-info-value">
+                            {% if is_verified %}
+                                <span class="badge badge-success"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Verified</span>
+                            {% else %}
+                                <span class="badge badge-warning"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Unverified</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="settings-card-footer">
+                    {% if not is_verified %}
+                    <a href="{% url 'accounts:resend_verification' %}" class="btn btn-primary">
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i> Resend Verification Email
+                    </a>
+                    {% else %}
+                    <span class="badge badge-outline">No action required</span>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+{% endblock %}

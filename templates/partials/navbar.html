@@ -28,6 +28,12 @@
             <div class="navbar-nav" id="navbar-nav">
                 {% if user.is_authenticated %}
                     <a href="{% url 'accounts:dashboard' %}" class="navbar-link">Dashboard</a>
+                    <a href="{% url 'accounts:security_notifications' %}" class="navbar-link navbar-notification-link" aria-label="Security notifications">
+                        <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                        {% if unread_notification_count > 0 %}
+                            <span class="navbar-notification-badge">{{ unread_notification_count }}</span>
+                        {% endif %}
+                    </a>
                     <div class="navbar-user-menu">
                         <button class="navbar-user-btn" id="profile-dropdown-btn" aria-haspopup="true" aria-expanded="false">
                             <span class="navbar-user-icon">&#x1F464;</span>
@@ -49,6 +55,9 @@
                             </a>
                             <a href="{% url 'accounts:password_change' %}" class="navbar-dropdown-item" role="menuitem">
                                 <i class="fa-solid fa-lock" aria-hidden="true"></i> Change Password
+                            </a>
+                            <a href="{% url 'accounts:security_dashboard' %}" class="navbar-dropdown-item" role="menuitem">
+                                <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Security
                             </a>
                             <div class="navbar-dropdown-divider" role="separator"></div>
                             <a href="{% url 'accounts:logout' %}" class="navbar-dropdown-item navbar-dropdown-danger" role="menuitem">

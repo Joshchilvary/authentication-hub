@@ -1,0 +1,23 @@
+New Login Detected
+
+Hi {{ user.first_name|default:user.email }},
+
+A new login to your Authentication Hub account was detected from a device or browser we have not seen before.
+
+Details:
+- Date and Time: {{ timestamp }}
+- Browser: {{ browser }}
+- Operating System: {{ operating_system }}
+- Device: {{ device_info }}
+- IP Address: {{ ip_address }}
+
+SECURITY NOTICE:
+If you do not recognize this login, review your active sessions and log out the unfamiliar session immediately.
+
+View your active sessions:
+http://{{ domain }}{% url 'accounts:active_sessions' %}
+
+If this was you, no further action is required.
+
+---
+Authentication Hub

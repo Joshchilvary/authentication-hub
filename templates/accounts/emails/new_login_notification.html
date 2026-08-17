@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Login Detected</title>
+    <style>
+      body { font-family: Arial, sans-serif; background-color: #f5f5f5; margin: 0; padding: 0; }
+      .container { max-width: 600px; margin: 40px auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+      .header { background-color: #dc2626; padding: 24px; text-align: center; }
+      .header h1 { color: #ffffff; margin: 0; font-size: 24px; }
+      .body { padding: 32px; }
+      .greeting { font-size: 18px; font-weight: bold; color: #171717; margin-bottom: 16px; }
+      .message { font-size: 16px; color: #525252; line-height: 1.6; margin-bottom: 24px; }
+      .details { margin: 20px 0; padding: 16px; background-color: #f5f5f5; border-radius: 6px; }
+      .details p { margin: 8px 0; font-size: 14px; color: #374151; }
+      .details strong { color: #171717; }
+      .warning { margin-top: 24px; padding: 16px; background-color: #fef3c7; border-radius: 6px; font-size: 14px; color: #92400e; }
+      .button { display: inline-block; padding: 12px 24px; background-color: #0284c7; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: bold; }
+      .button:hover { background-color: #0369a1; }
+      .footer { padding: 24px; text-align: center; font-size: 12px; color: #737373; border-top: 1px solid #e5e5e5; }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>New Login Detected</h1>
+      </div>
+      <div class="body">
+        <div class="greeting">Hi {{ user.first_name|default:user.email }},</div>
+        <p class="message">
+          A new login to your Authentication Hub account was detected from a device or browser we have not seen before.
+        </p>
+        <div class="details">
+          <p><strong>Date and Time:</strong> {{ timestamp }}</p>
+          <p><strong>Browser:</strong> {{ browser }}</p>
+          <p><strong>Operating System:</strong> {{ operating_system }}</p>
+          <p><strong>Device:</strong> {{ device_info }}</p>
+          <p><strong>IP Address:</strong> {{ ip_address }}</p>
+        </div>
+        <div class="warning">
+          <strong>Security Notice:</strong> If you do not recognize this login, review your active sessions and log out the unfamiliar session immediately.
+        </div>
+        <p style="text-align: center; margin-top: 24px;">
+          <a href="http://{{ domain }}{% url 'accounts:active_sessions' %}" class="button">
+            View Active Sessions
+          </a>
+        </p>
+        <p class="message">
+          If this was you, no further action is required.
+        </p>
+      </div>
+      <div class="footer">
+        &copy; 2026 Authentication Hub. All rights reserved.
+      </div>
+    </div>
+  </body>
+</html>

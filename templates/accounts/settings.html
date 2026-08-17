@@ -45,6 +45,9 @@ Account Settings | Authentication Hub
                     </div>
                 </div>
                 <div class="settings-card-footer">
+                    <a href="{% url 'accounts:security_dashboard' %}" class="btn btn-secondary">
+                        <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Security Dashboard
+                    </a>
                     <a href="{% url 'accounts:password_change' %}" class="btn btn-primary">
                         <i class="fa-solid fa-key" aria-hidden="true"></i> Change Password
                     </a>

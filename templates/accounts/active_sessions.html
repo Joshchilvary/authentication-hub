@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Active Sessions | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <h1 class="profile-name">Active Sessions</h1>
+                <p class="profile-subtitle">Devices and browsers where you are currently logged in.</p>
+            </div>
+
+            <div class="active-sessions-body">
+                {% if sessions %}
+                    {% if sessions|length > 1 %}
+                        <form method="post" action="{% url 'accounts:logout_other_sessions' %}" style="margin-bottom: 1rem;" onsubmit="return confirm('Are you sure you want to log out all other devices?');">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-warning">Log out all other devices</button>
+                        </form>
+                    {% endif %}
+                    <div class="active-sessions-table-wrapper">
+                        <table class="active-sessions-table">
+                            <thead>
+                                <tr>
+                                    <th>Status</th>
+                                    <th>Browser</th>
+                                    <th>Operating System</th>
+                                    <th>Device</th>
+                                    <th>IP Address</th>
+                                    <th>Last Activity</th>
+                                    <th>Remember Me</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for session in sessions %}
+                                    <tr class="{% if session.is_current %}current-session{% endif %}">
+                                        <td>
+                                            {% if session.is_current %}
+                                                <span class="badge badge-success">
+                                                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Current Session
+                                                </span>
+                                            {% else %}
+                                                <span class="badge badge-outline">Active</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ session.browser|default:"—" }}</td>
+                                        <td>{{ session.operating_system|default:"—" }}</td>
+                                        <td>{{ session.device_info|default:"—" }}</td>
+                                        <td>{{ session.ip_address|default:"—" }}</td>
+                                        <td>{{ session.last_activity|date:"M d, Y H:i" }}</td>
+                                        <td>
+                                            {% if session.remember_me %}
+                                                <span class="badge badge-success">Yes</span>
+                                            {% else %}
+                                                <span class="badge badge-outline">No</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if not session.is_current %}
+                                                <form method="post" action="{% url 'accounts:revoke_session' session.id %}" style="display: inline;">
+                                                    {% csrf_token %}
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger">Log out</button>
+                                                </form>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="active-sessions-empty">
+                        <i class="fa-solid fa-desktop" aria-hidden="true"></i>
+                        <p>No active sessions found.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

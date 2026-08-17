@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+Login History | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="profile-section">
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="profile-header">
+                <h1 class="profile-name">Login History</h1>
+                <p class="profile-subtitle">Review your recent authentication activity.</p>
+            </div>
+
+            <div class="login-history-body">
+                {% if page_obj %}
+                    <div class="login-history-table-wrapper">
+                        <table class="login-history-table">
+                            <thead>
+                                <tr>
+                                    <th>Event</th>
+                                    <th>Date / Time</th>
+                                    <th>Browser</th>
+                                    <th>Operating System</th>
+                                    <th>Device</th>
+                                    <th>IP Address</th>
+                                    <th>Risk</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for entry in page_obj %}
+                                    <tr>
+                                        <td>
+                                            {% if entry.event_type == "login_success" %}
+                                                <span class="badge badge-success">
+                                                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Login Success
+                                                </span>
+                                            {% elif entry.event_type == "login_failed" %}
+                                                <span class="badge badge-error">
+                                                    <i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Login Failed
+                                                </span>
+                                            {% elif entry.event_type == "login_throttled" %}
+                                                <span class="badge badge-warning">
+                                                    <i class="fa-solid fa-gauge-high" aria-hidden="true"></i> Login Throttled
+                                                </span>
+                                            {% elif entry.event_type == "login_blocked" %}
+                                                <span class="badge badge-warning">
+                                                    <i class="fa-solid fa-ban" aria-hidden="true"></i> Login Blocked
+                                                </span>
+                                            {% elif entry.event_type == "logout" %}
+                                                <span class="badge badge-outline">
+                                                    <i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Logout
+                                                </span>
+                                            {% elif entry.event_type == "session_expired" %}
+                                                <span class="badge badge-warning">
+                                                    <i class="fa-solid fa-clock" aria-hidden="true"></i> Session Expired
+                                                </span>
+                                            {% elif entry.event_type == "password_change" %}
+                                                <span class="badge badge-outline">
+                                                    <i class="fa-solid fa-key" aria-hidden="true"></i> Password Changed
+                                                </span>
+                                            {% elif entry.event_type == "password_reset_request" %}
+                                                <span class="badge badge-outline">
+                                                    <i class="fa-solid fa-envelope" aria-hidden="true"></i> Password Reset Requested
+                                                </span>
+                                            {% elif entry.event_type == "password_reset_completed" %}
+                                                <span class="badge badge-success">
+                                                    <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Password Reset Completed
+                                                </span>
+                                            {% else %}
+                                                <span class="badge badge-outline">{{ entry.get_event_type_display }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ entry.timestamp|date:"M d, Y H:i" }}</td>
+                                        <td>{{ entry.browser|default:"—" }}</td>
+                                        <td>{{ entry.operating_system|default:"—" }}</td>
+                                        <td>{{ entry.device_info|default:"—" }}</td>
+                                        <td>{{ entry.ip_address|default:"—" }}</td>
+                                        <td>
+                                            {% if entry.risk_assessments.exists %}
+                                                {% with risk=entry.risk_assessments.all.0 %}
+                                                    {% if risk.risk_level == 'low' %}
+                                                        <span class="badge badge-success">{{ risk.risk_score }}</span>
+                                                    {% elif risk.risk_level == 'medium' %}
+                                                        <span class="badge badge-warning">{{ risk.risk_score }}</span>
+                                                    {% elif risk.risk_level == 'high' %}
+                                                        <span class="badge badge-warning">{{ risk.risk_score }}</span>
+                                                    {% else %}
+                                                        <span class="badge badge-error">{{ risk.risk_score }}</span>
+                                                    {% endif %}
+                                                {% endwith %}
+                                            {% else %}
+                                                <span class="badge badge-outline">—</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {% if page_obj.has_other_pages %}
+                        <div class="login-history-pagination">
+                            {% if page_obj.has_previous %}
+                                <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-secondary btn-sm">&laquo; Previous</a>
+                            {% endif %}
+                            <span class="login-history-page-info">
+                                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                            </span>
+                            {% if page_obj.has_next %}
+                                <a href="?page={{ page_obj.next_page_number }}" class="btn btn-secondary btn-sm">Next &raquo;</a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <div class="login-history-empty">
+                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
+                        <p>No login activity has been recorded yet.</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
