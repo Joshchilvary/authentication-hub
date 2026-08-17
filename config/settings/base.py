@@ -91,6 +91,7 @@ SESSION_COOKIE_AGE = int(os.environ.get('SESSION_COOKIE_AGE', 1209600))
 # Do not refresh session expiry on every request.
 # Session expiry is fixed at login time based on Remember Me choice.
 SESSION_SAVE_EVERY_REQUEST = False
+SESSION_COOKIE_SAMESITE = "Lax"
 
 # Idle session timeout
 # IDLE_SESSION_TIMEOUT: Maximum inactivity duration in seconds before
