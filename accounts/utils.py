@@ -25,13 +25,18 @@ def get_client_ip(request):
     """
     Extract the client IP address from the request.
 
-    Checks ``HTTP_X_FORWARDED_FOR`` first, then falls back to
-    ``REMOTE_ADDR``. In production, only trust ``X-Forwarded-For``
-    when the application is behind a known trusted proxy. If the
-    app is directly accessible, an attacker can spoof that header.
+    Checks ``HTTP_X_FORWARDED_FOR`` first when the immediate peer is in
+    ``TRUSTED_PROXY_IPS``, then falls back to ``REMOTE_ADDR``. This
+    prevents IP spoofing when the application is not behind a trusted
+    reverse proxy.
 
     Trusted-proxy considerations
     ----------------------------
+    Configure ``TRUSTED_PROXY_IPS`` in settings with the IP addresses of
+    your reverse proxies. When the request comes from a trusted proxy,
+    ``X-Forwarded-For`` is used. Otherwise, ``REMOTE_ADDR`` is used to
+    prevent clients from spoofing their IP address.
+
     If your deployment sits behind a reverse proxy (for example
     nginx, Cloudflare, or a load balancer), configure the proxy
     to overwrite ``X-Forwarded-For`` with the actual client IP
@@ -42,12 +47,15 @@ def get_client_ip(request):
     Returns:
         str or None: The extracted IP address, or None if unavailable.
     """
-    x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(",")[0].strip()
-        return ip
+    trusted_proxies = getattr(settings, 'TRUSTED_PROXY_IPS', [])
+    remote_addr = request.META.get("REMOTE_ADDR")
 
-    return request.META.get("REMOTE_ADDR")
+    if trusted_proxies and remote_addr in trusted_proxies:
+        x_forwarded_for = request.META.get("HTTP_X_FORWARDED_FOR")
+        if x_forwarded_for:
+            return x_forwarded_for.split(",")[0].strip()
+
+    return remote_addr
 
 
 def parse_user_agent(user_agent_string):

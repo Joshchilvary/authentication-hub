@@ -9,15 +9,15 @@ Security Notifications | Authentication Hub
 <section class="profile-section">
     <div class="profile-container">
         <div class="profile-card">
-            <div class="profile-header">
-                <h1 class="profile-name">Security Notifications</h1>
-                <p class="profile-subtitle">Review your recent security alerts and account events.</p>
+            <div class="section-header">
+                <h1>Security Notifications</h1>
+                <p>Review your recent security alerts and account events.</p>
             </div>
 
             <div class="notifications-body">
                 {% if page_obj %}
                     {% if page_obj.paginator.count > 1 %}
-                    <form method="post" action="{% url 'accounts:mark_all_notifications_read' %}" style="margin-bottom: 1rem;" onsubmit="return confirm('Mark all notifications as read?');">
+                    <form method="post" action="{% url 'accounts:mark_all_notifications_read' %}" class="form-actions" onsubmit="return confirm('Mark all notifications as read?');">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-secondary">Mark all as read</button>
                     </form>
@@ -38,26 +38,26 @@ Security Notifications | Authentication Hub
                             <tbody>
                                 {% for notification in page_obj %}
                                     <tr class="{% if not notification.is_read %}notification-unread{% endif %}">
-                                        <td>
+                                        <td data-label="Status">
                                             {% if notification.is_read %}
                                                 <span class="badge badge-outline">Read</span>
                                             {% else %}
                                                 <span class="badge badge-success">Unread</span>
                                             {% endif %}
                                         </td>
-                                        <td>
+                                        <td data-label="Notification">
                                             <strong>{{ notification.title }}</strong>
                                             <p class="notification-message">{{ notification.message }}</p>
-                                            <form method="post" action="{% url 'accounts:mark_notification_read' notification.id %}" style="margin-top: 0.5rem;">
+                                            <form method="post" action="{% url 'accounts:mark_notification_read' notification.id %}" class="form-actions-inline" style="margin-top: 0.5rem;">
                                                 {% csrf_token %}
                                                 <button type="submit" class="btn btn-sm btn-secondary">Mark as read</button>
                                             </form>
                                         </td>
-                                        <td>{{ notification.created_at|date:"M d, Y H:i" }}</td>
-                                        <td>{{ notification.browser|default:"—" }}</td>
-                                        <td>{{ notification.operating_system|default:"—" }}</td>
-                                        <td>{{ notification.device_info|default:"—" }}</td>
-                                        <td>{{ notification.ip_address|default:"—" }}</td>
+                                        <td data-label="Date / Time">{{ notification.created_at|date:"M d, Y H:i" }}</td>
+                                        <td data-label="Browser">{{ notification.browser|default:"—" }}</td>
+                                        <td data-label="Operating System">{{ notification.operating_system|default:"—" }}</td>
+                                        <td data-label="Device">{{ notification.device_info|default:"—" }}</td>
+                                        <td data-label="IP Address">{{ notification.ip_address|default:"—" }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -78,9 +78,10 @@ Security Notifications | Authentication Hub
                         </div>
                     {% endif %}
                 {% else %}
-                    <div class="login-history-empty">
-                        <i class="fa-solid fa-bell" aria-hidden="true"></i>
-                        <p>No security notifications yet.</p>
+                    <div class="empty-state">
+                        <i class="fa-solid fa-bell empty-state-icon" aria-hidden="true"></i>
+                        <p class="empty-state-title">No security notifications.</p>
+                        <p class="empty-state-description">You will see alerts here when there is important account activity.</p>
                     </div>
                 {% endif %}
             </div>

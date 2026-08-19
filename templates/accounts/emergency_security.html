@@ -6,39 +6,41 @@ Emergency Security | Authentication Hub
 {% endblock %}
 
 {% block content %}
-<section class="auth-section">
-    <div class="auth-card">
-        <div class="auth-header">
-            <h1>Emergency Security</h1>
-            <p class="auth-subtitle">Immediately secure your account by revoking all active sessions.</p>
-        </div>
-
-        <div class="alert alert-warning">
-            <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
-            <strong>Warning:</strong> This will log you out of all devices and require you to sign in again.
-        </div>
-
-        <p>
-            If you believe someone has accessed your account without authorization, you can use this action to immediately revoke all active sessions. This will:
-        </p>
-        <ul>
-            <li>Log you out of all devices and browsers</li>
-            <li>Invalidate all active session tokens</li>
-            <li>Record this security action in your login history</li>
-            <li>Send you a security notification</li>
-        </ul>
-
-        <form method="post" action="{% url 'accounts:emergency_security' %}" onsubmit="return confirm('Are you sure? This will log you out of all devices and require you to sign in again.');">
-            {% csrf_token %}
-            <div class="form-actions">
-                <button type="submit" class="btn btn-danger btn-block">
-                    <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure My Account
-                </button>
-                <a href="{% url 'accounts:security_dashboard' %}" class="btn btn-secondary btn-block" style="margin-top: 0.5rem;">
-                    Cancel
-                </a>
+<section class="profile-section">
+    <div class="profile-container">
+        <div class="profile-card">
+            <div class="section-header">
+                <h1>Emergency Security</h1>
+                <p>Immediately secure your account by revoking all active sessions.</p>
             </div>
-        </form>
+
+            <div class="profile-body">
+                <div class="alert alert-warning">
+                    <i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>
+                    <strong>Warning:</strong> This will log you out of all devices and require you to sign in again.
+                </div>
+
+                <p>
+                    If you believe someone has accessed your account without authorization, you can use this action to immediately revoke all active sessions. This will:
+                </p>
+                <ul>
+                    <li>Log you out of all devices and browsers</li>
+                    <li>Invalidate all active session tokens</li>
+                    <li>Record this security action in your login history</li>
+                    <li>Send you a security notification</li>
+                </ul>
+
+                <form method="post" action="{% url 'accounts:emergency_security' %}" onsubmit="return confirm('Are you sure? This will log you out of all devices and require you to sign in again.');">
+                    {% csrf_token %}
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Secure My Account
+                        </button>
+                        <a href="{% url 'accounts:security_dashboard' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </section>
 {% endblock %}

@@ -9,9 +9,9 @@ Login History | Authentication Hub
 <section class="profile-section">
     <div class="profile-container">
         <div class="profile-card">
-            <div class="profile-header">
-                <h1 class="profile-name">Login History</h1>
-                <p class="profile-subtitle">Review your recent authentication activity.</p>
+            <div class="section-header">
+                <h1>Login History</h1>
+                <p>Review your recent authentication activity.</p>
             </div>
 
             <div class="login-history-body">
@@ -32,7 +32,7 @@ Login History | Authentication Hub
                             <tbody>
                                 {% for entry in page_obj %}
                                     <tr>
-                                        <td>
+                                        <td data-label="Event">
                                             {% if entry.event_type == "login_success" %}
                                                 <span class="badge badge-success">
                                                     <i class="fa-solid fa-circle-check" aria-hidden="true"></i> Login Success
@@ -73,12 +73,12 @@ Login History | Authentication Hub
                                                 <span class="badge badge-outline">{{ entry.get_event_type_display }}</span>
                                             {% endif %}
                                         </td>
-                                        <td>{{ entry.timestamp|date:"M d, Y H:i" }}</td>
-                                        <td>{{ entry.browser|default:"—" }}</td>
-                                        <td>{{ entry.operating_system|default:"—" }}</td>
-                                        <td>{{ entry.device_info|default:"—" }}</td>
-                                        <td>{{ entry.ip_address|default:"—" }}</td>
-                                        <td>
+                                        <td data-label="Date / Time">{{ entry.timestamp|date:"M d, Y H:i" }}</td>
+                                        <td data-label="Browser">{{ entry.browser|default:"—" }}</td>
+                                        <td data-label="Operating System">{{ entry.operating_system|default:"—" }}</td>
+                                        <td data-label="Device">{{ entry.device_info|default:"—" }}</td>
+                                        <td data-label="IP Address">{{ entry.ip_address|default:"—" }}</td>
+                                        <td data-label="Risk">
                                             {% if entry.risk_assessments.exists %}
                                                 {% with risk=entry.risk_assessments.all.0 %}
                                                     {% if risk.risk_level == 'low' %}
@@ -115,9 +115,10 @@ Login History | Authentication Hub
                         </div>
                     {% endif %}
                 {% else %}
-                    <div class="login-history-empty">
-                        <i class="fa-solid fa-clock-rotate-left" aria-hidden="true"></i>
-                        <p>No login activity has been recorded yet.</p>
+                    <div class="empty-state">
+                        <i class="fa-solid fa-clock-rotate-left empty-state-icon" aria-hidden="true"></i>
+                        <p class="empty-state-title">No login activity yet.</p>
+                        <p class="empty-state-description">Your recent authentication events will appear here.</p>
                     </div>
                 {% endif %}
             </div>

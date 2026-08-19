@@ -671,7 +671,7 @@ def logout_view(request):
 @login_required
 def profile(request):
     """
-    Display the authenticated user's profile information.
+    Display the authenticated user's profile dashboard.
 
     Only authenticated users can access this view. If a user is not
     authenticated, Django's @login_required decorator automatically
@@ -680,13 +680,50 @@ def profile(request):
     Uses request.user to avoid an unnecessary database query since the
     user is already available in the request object after authentication.
 
+    The dashboard enriches the profile page with lightweight security
+    summaries pulled from existing models. All queries are scoped to
+    request.user to prevent IDOR exposure.
+
     Args:
         request: The HTTP request object containing the authenticated user.
 
     Returns:
-        HttpResponse: Rendered profile template with the user object.
+        HttpResponse: Rendered profile template with user and summary context.
     """
-    return render(request, "accounts/profile.html", {"user": request.user})
+    user = request.user
+
+    active_sessions_count = UserSession.objects.filter(
+        user=user,
+        is_active=True,
+    ).count()
+
+    latest_login = (
+        LoginHistory.objects.filter(
+            user=user,
+            event_type=LoginHistory.EVENT_TYPE_LOGIN_SUCCESS,
+        )
+        .order_by("-timestamp")
+        .first()
+    )
+
+    latest_risk_assessment = (
+        SecurityRiskAssessment.objects.filter(
+            user=user,
+        )
+        .order_by("-created_at")
+        .first()
+    )
+
+    context = {
+        "user": user,
+        "active_sessions_count": active_sessions_count,
+        "latest_login": latest_login,
+        "latest_risk_assessment": latest_risk_assessment,
+        "latest_risk_assessment_risk_reasons": latest_risk_assessment.risk_reasons.split("; ") if latest_risk_assessment and latest_risk_assessment.risk_reasons else [],
+        "is_verified": user.is_verified,
+    }
+
+    return render(request, "accounts/profile.html", context)
 
 
 @login_required

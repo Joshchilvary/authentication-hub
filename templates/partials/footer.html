@@ -1,6 +1,17 @@
 <footer class="site-footer">
     <div class="footer-content">
         <p class="footer-text">Secure Authentication Built with Django</p>
-        <p>&copy; 2026</p>
+        <nav aria-label="Footer navigation">
+            <a href="{% url 'home' %}">Home</a>
+            &middot;
+            <a href="{% url 'accounts:register' %}">Register</a>
+            &middot;
+            <a href="{% url 'accounts:login' %}">Login</a>
+            &middot;
+            <a href="{% url 'api:swagger_docs' %}">API Docs</a>
+            &middot;
+            <a href="{% url 'accounts:security_dashboard' %}">Security</a>
+        </nav>
+        <p>&copy; 2026 Authentication Hub</p>
     </div>
 </footer>

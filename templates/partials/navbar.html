@@ -27,8 +27,9 @@
 
             <div class="navbar-nav" id="navbar-nav">
                 {% if user.is_authenticated %}
-                    <a href="{% url 'accounts:dashboard' %}" class="navbar-link">Dashboard</a>
-                    <a href="{% url 'accounts:security_notifications' %}" class="navbar-link navbar-notification-link" aria-label="Security notifications">
+                    {% with current_url=request.resolver_match.url_name %}
+                    <a href="{% url 'accounts:dashboard' %}" class="navbar-link {% if current_url == 'dashboard' %}navbar-link-active{% endif %}">Dashboard</a>
+                    <a href="{% url 'accounts:security_notifications' %}" class="navbar-link navbar-notification-link {% if current_url == 'security_notifications' %}navbar-link-active{% endif %}" aria-label="Security notifications">
                         <i class="fa-solid fa-bell" aria-hidden="true"></i>
                         {% if unread_notification_count > 0 %}
                             <span class="navbar-notification-badge">{{ unread_notification_count }}</span>
@@ -47,16 +48,16 @@
                                 &#x1F464; {{ user.get_full_name|default:user.email }}
                             </div>
                             <div class="navbar-dropdown-divider" role="separator"></div>
-                            <a href="{% url 'accounts:profile' %}" class="navbar-dropdown-item" role="menuitem">
+                            <a href="{% url 'accounts:profile' %}" class="navbar-dropdown-item {% if current_url == 'profile' or current_url == 'edit_profile' %}navbar-dropdown-active{% endif %}" role="menuitem">
                                 <i class="fa-solid fa-user" aria-hidden="true"></i> My Profile
                             </a>
-                            <a href="{% url 'accounts:settings' %}" class="navbar-dropdown-item" role="menuitem">
+                            <a href="{% url 'accounts:settings' %}" class="navbar-dropdown-item {% if current_url == 'settings' %}navbar-dropdown-active{% endif %}" role="menuitem">
                                 <i class="fa-solid fa-gear" aria-hidden="true"></i> Account Settings
                             </a>
-                            <a href="{% url 'accounts:password_change' %}" class="navbar-dropdown-item" role="menuitem">
+                            <a href="{% url 'accounts:password_change' %}" class="navbar-dropdown-item {% if current_url == 'password_change' or current_url == 'password_reset' or current_url == 'password_reset_confirm' or current_url == 'password_reset_complete' %}navbar-dropdown-active{% endif %}" role="menuitem">
                                 <i class="fa-solid fa-lock" aria-hidden="true"></i> Change Password
                             </a>
-                            <a href="{% url 'accounts:security_dashboard' %}" class="navbar-dropdown-item" role="menuitem">
+                            <a href="{% url 'accounts:security_dashboard' %}" class="navbar-dropdown-item {% if current_url == 'security_dashboard' or current_url == 'active_sessions' or current_url == 'login_history' or current_url == 'security_notifications' or current_url == 'emergency_security' %}navbar-dropdown-active{% endif %}" role="menuitem">
                                 <i class="fa-solid fa-shield-halved" aria-hidden="true"></i> Security
                             </a>
                             <div class="navbar-dropdown-divider" role="separator"></div>
@@ -65,6 +66,7 @@
                             </a>
                         </div>
                     </div>
+                    {% endwith %}
                 {% else %}
                     <a href="{% url 'accounts:login' %}" class="navbar-link">Login</a>
                     <a href="{% url 'accounts:register' %}" class="btn btn-primary navbar-link navbar-link-btn">Register</a>

@@ -4,125 +4,893 @@
 Home | Authentication Hub
 {% endblock %}
 
+{% block extra_css %}
+<style>
+/* ============================================================
+   Homepage Upgrade — Scoped Styles
+   ============================================================ */
+
+/* Hero */
+.home-hero {
+    position: relative;
+    overflow: hidden;
+    background: linear-gradient(160deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+    color: #ffffff;
+    padding: 5rem 0 6rem;
+}
+
+.home-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+}
+
+.home-hero::after {
+    content: "";
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 800px;
+    height: 800px;
+    background: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.home-hero-container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.home-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(14, 165, 233, 0.1);
+    border: 1px solid rgba(14, 165, 233, 0.3);
+    color: #38bdf8;
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    padding: var(--spacing-xs) var(--spacing-md);
+    border-radius: var(--radius-full);
+    margin-bottom: var(--spacing-xl);
+}
+
+.home-hero-title {
+    font-size: clamp(2.25rem, 5vw, 3.75rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: var(--spacing-lg);
+    letter-spacing: -0.02em;
+}
+
+.home-hero-title span {
+    background: linear-gradient(135deg, #38bdf8 0%, #818cf8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.home-hero-subtitle {
+    font-size: var(--font-size-lg);
+    color: #94a3b8;
+    max-width: 36rem;
+    margin-bottom: var(--spacing-2xl);
+    line-height: var(--line-height-relaxed);
+}
+
+.home-hero-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.home-hero-actions .btn {
+    min-width: 160px;
+}
+
+/* Stats strip */
+.home-stats {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: var(--spacing-xl) 0;
+}
+
+.home-stats-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--spacing-lg);
+    text-align: center;
+}
+
+.home-stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.home-stat-value {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    color: var(--color-text-primary);
+    line-height: 1;
+}
+
+.home-stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    font-weight: var(--font-weight-medium);
+}
+
+/* Features */
+.home-features {
+    padding: var(--spacing-3xl) 0;
+    background: #ffffff;
+}
+
+.home-section-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.home-section-header {
+    text-align: center;
+    max-width: 48rem;
+    margin: 0 auto var(--spacing-3xl);
+}
+
+.home-section-label {
+    display: inline-block;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-primary-600);
+    margin-bottom: var(--spacing-sm);
+}
+
+.home-section-title {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-md);
+    letter-spacing: -0.01em;
+}
+
+.home-section-subtitle {
+    font-size: var(--font-size-md);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-relaxed);
+    margin: 0;
+}
+
+.home-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.home-feature-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.home-feature-card:hover {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    transform: translateY(-4px);
+    border-color: #cbd5e1;
+}
+
+.home-feature-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--color-primary-500), var(--color-secondary-500));
+    opacity: 0;
+    transition: opacity 200ms ease;
+}
+
+.home-feature-card:hover::before {
+    opacity: 1;
+}
+
+.home-feature-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    background: var(--color-primary-50);
+    color: var(--color-primary-600);
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.home-feature-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.home-feature-description {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+    margin-bottom: var(--spacing-md);
+}
+
+.home-feature-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.home-feature-status.available {
+    color: var(--color-success-700);
+}
+
+.home-feature-status.available::before {
+    content: "";
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--color-success-500);
+}
+
+/* Security section */
+.home-security {
+    padding: var(--spacing-3xl) 0;
+    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.home-security-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.home-security-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.home-security-card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+.home-security-icon {
+    font-size: 1.75rem;
+    margin-bottom: var(--spacing-md);
+    display: block;
+}
+
+.home-security-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.home-security-text {
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--line-height-normal);
+    margin: 0;
+}
+
+/* Developer section */
+.home-developer {
+    padding: var(--spacing-3xl) 0;
+    background: #0f172a;
+    color: #ffffff;
+}
+
+.home-developer .home-section-title {
+    color: #ffffff;
+}
+
+.home-developer .home-section-subtitle {
+    color: #94a3b8;
+}
+
+.home-developer-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-2xl);
+}
+
+.home-developer-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-xl);
+    padding: var(--spacing-xl);
+    transition: border-color 200ms ease, background 200ms ease;
+}
+
+.home-developer-card:hover {
+    border-color: rgba(56, 189, 248, 0.4);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.home-developer-icon {
+    font-size: 1.5rem;
+    margin-bottom: var(--spacing-md);
+    display: block;
+}
+
+.home-developer-title {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: #ffffff;
+    margin-bottom: var(--spacing-sm);
+}
+
+.home-developer-text {
+    font-size: var(--font-size-sm);
+    color: #94a3b8;
+    line-height: var(--line-height-normal);
+    margin-bottom: var(--spacing-md);
+}
+
+.home-code {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    font-family: var(--font-family-mono);
+    font-size: var(--font-size-xs);
+    color: #e2e8f0;
+    overflow-x: auto;
+}
+
+.home-code span {
+    color: #38bdf8;
+}
+
+/* Trust section */
+.home-trust {
+    padding: var(--spacing-3xl) 0;
+    background: #ffffff;
+}
+
+.home-trust-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.home-trust-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-lg);
+    transition: box-shadow 200ms ease, border-color 200ms ease;
+}
+
+.home-trust-item:hover {
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
+}
+
+.home-trust-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius-md);
+    background: #dcfce7;
+    color: var(--color-success-700);
+    font-size: 1.25rem;
+    flex-shrink: 0;
+}
+
+.home-trust-content {
+    min-width: 0;
+}
+
+.home-trust-title {
+    font-size: var(--font-size-sm);
+    font-weight: 700;
+    color: var(--color-text-primary);
+    margin-bottom: 2px;
+}
+
+.home-trust-text {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    margin: 0;
+}
+
+/* Footer CTA */
+.home-footer-cta {
+    padding: var(--spacing-3xl) 0;
+    background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
+    color: #ffffff;
+    text-align: center;
+}
+
+.home-footer-cta-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--spacing-lg);
+}
+
+.home-footer-cta-title {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-sm);
+    letter-spacing: -0.01em;
+}
+
+.home-footer-cta-text {
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xl);
+    font-size: var(--font-size-md);
+}
+
+.home-footer-cta .btn-primary {
+    background-color: #ffffff;
+    color: var(--color-primary-700);
+}
+
+.home-footer-cta .btn-primary:hover {
+    background-color: #f8fafc;
+    color: var(--color-primary-800);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+/* Animations */
+@keyframes fadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.home-animate-in {
+    opacity: 0;
+    animation: fadeUp 600ms ease-out forwards;
+}
+
+.home-animate-delay-1 { animation-delay: 100ms; }
+.home-animate-delay-2 { animation-delay: 200ms; }
+.home-animate-delay-3 { animation-delay: 300ms; }
+.home-animate-delay-4 { animation-delay: 400ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    .home-animate-in {
+        animation: none;
+        opacity: 1;
+    }
+    .home-feature-card,
+    .home-security-card,
+    .home-developer-card,
+    .home-trust-item {
+        transition: none;
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .home-hero {
+        padding: 3rem 0 4rem;
+    }
+
+    .home-hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .home-hero-actions .btn {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .home-stats-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .home-section-title {
+        font-size: var(--font-size-2xl);
+    }
+
+    .home-footer-cta-title {
+        font-size: var(--font-size-2xl);
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
-<section class="hero-section">
-    <div class="hero-container">
-        <div class="hero-content">
-            <h1 class="hero-title">Authentication Hub</h1>
-            <p class="hero-subtitle">A reusable Django authentication system built for modern web applications.</p>
+<!-- Hero -->
+<section class="home-hero">
+    <div class="home-hero-container">
+        <div class="home-hero-badge">
+            <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
+            Authentication &amp; Identity Security
+        </div>
+        <h1 class="home-hero-title">
+            Secure Identity.<br>
+            <span>Smarter Authentication.</span>
+        </h1>
+        <p class="home-hero-subtitle">
+            Authentication Hub provides modern authentication, account protection,
+            and developer-ready API access for securing user identities.
+        </p>
+        <div class="home-hero-actions">
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary">Get Started</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3); color: #ffffff;">Login</a>
+            {% endif %}
+            <a href="{% url 'api:swagger_docs' %}" class="btn btn-outline" style="border-color: rgba(255,255,255,0.3); color: #ffffff;">Developer API</a>
+        </div>
+    </div>
+</section>
 
-            <div class="hero-actions">
-                {% if user.is_authenticated %}
-                    <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
-                {% else %}
-                    <a href="{% url 'accounts:register' %}" class="btn btn-primary">Get Started</a>
-                    <a href="{% url 'accounts:login' %}" class="btn btn-outline">Login</a>
-                {% endif %}
+<!-- Stats -->
+<section class="home-stats">
+    <div class="home-stats-container">
+        <div class="home-stat-item">
+            <div class="home-stat-value">13+</div>
+            <div class="home-stat-label">Security Features</div>
+        </div>
+        <div class="home-stat-item">
+            <div class="home-stat-value">JWT</div>
+            <div class="home-stat-label">API Authentication</div>
+        </div>
+        <div class="home-stat-item">
+            <div class="home-stat-value">100%</div>
+            <div class="home-stat-label">Open Source</div>
+        </div>
+        <div class="home-stat-item">
+            <div class="home-stat-value">Django</div>
+            <div class="home-stat-label">Powered By</div>
+        </div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="home-features">
+    <div class="home-section-container">
+        <div class="home-section-header">
+            <div class="home-section-label">Platform Features</div>
+            <h2 class="home-section-title">Built for real authentication security</h2>
+            <p class="home-section-subtitle">
+                Every feature is implemented and tested. No placeholders, no mock functionality.
+            </p>
+        </div>
+
+        <div class="home-features-grid">
+            <div class="home-feature-card home-animate-in home-animate-delay-1">
+                <div class="home-feature-icon">&#x1F4EC;</div>
+                <h3 class="home-feature-title">Email Authentication</h3>
+                <p class="home-feature-description">
+                    Users authenticate with email instead of usernames. Built on Django's secure authentication framework.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-1">
+                <div class="home-feature-icon">&#x1F510;</div>
+                <h3 class="home-feature-title">Secure Sessions</h3>
+                <p class="home-feature-description">
+                    Session management with idle timeout, remember-me, and active session tracking across devices.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-1">
+                <div class="home-feature-icon">&#x1F464;</div>
+                <h3 class="home-feature-title">User Profiles</h3>
+                <p class="home-feature-description">
+                    Extendable profiles with avatar, phone, bio, and secure API-driven updates.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-2">
+                <div class="home-feature-icon">&#x1F510;</div>
+                <h3 class="home-feature-title">Password Reset</h3>
+                <p class="home-feature-description">
+                    Secure token-based password reset via email with rate-limited attempts.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-2">
+                <div class="home-feature-icon">&#x2709;</div>
+                <h3 class="home-feature-title">Email Verification</h3>
+                <p class="home-feature-description">
+                    Verify email addresses during registration with signed tokens and resend support.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-2">
+                <div class="home-feature-icon">&#x1F4DA;</div>
+                <h3 class="home-feature-title">Login History</h3>
+                <p class="home-feature-description">
+                    Complete audit trail of authentication events with IP, browser, and device metadata.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-3">
+                <div class="home-feature-icon">&#x1F6E1;</div>
+                <h3 class="home-feature-title">Active Sessions</h3>
+                <p class="home-feature-description">
+                    View and manage active sessions. Revoke individual sessions or log out all other devices.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-3">
+                <div class="home-feature-icon">&#x1F6A8;</div>
+                <h3 class="home-feature-title">Brute-Force Protection</h3>
+                <p class="home-feature-description">
+                    Email and IP-based throttling with automatic lockout after repeated failed attempts.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-3">
+                <div class="home-feature-icon">&#x1F514;</div>
+                <h3 class="home-feature-title">Security Notifications</h3>
+                <p class="home-feature-description">
+                    Real-time alerts for new logins, new devices, suspicious activity, and session events.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-4">
+                <div class="home-feature-icon">&#x1F50D;</div>
+                <h3 class="home-feature-title">Risk Assessment</h3>
+                <p class="home-feature-description">
+                    scored login risk analysis based on new devices, IPs, browsers, and recent failures.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-4">
+                <div class="home-feature-icon">&#x26A0;</div>
+                <h3 class="home-feature-title">Emergency Controls</h3>
+                <p class="home-feature-description">
+                    Emergency security actions including global logout and session revocation.
+                </p>
+                <span class="home-feature-status available">Available</span>
+            </div>
+
+            <div class="home-feature-card home-animate-in home-animate-delay-4">
+                <div class="home-feature-icon">&#x1F4BB;</div>
+                <h3 class="home-feature-title">Developer API</h3>
+                <p class="home-feature-description">
+                    RESTful API with JWT authentication, interactive documentation, and typed endpoints.
+                </p>
+                <span class="home-feature-status available">Available</span>
             </div>
         </div>
     </div>
 </section>
 
-<section class="features-section">
-    <div class="features-container">
-        <h2 class="features-title">Features</h2>
-        <p class="features-subtitle">Everything you need for secure user authentication.</p>
+<!-- Security First -->
+<section class="home-security">
+    <div class="home-section-container">
+        <div class="home-section-header">
+            <div class="home-section-label">Security First</div>
+            <h2 class="home-section-title">Security built into every layer</h2>
+            <p class="home-section-subtitle">
+                Authentication Hub treats security as a core requirement, not an afterthought.
+            </p>
+        </div>
 
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">&#x1F4EC;</div>
-                <h3 class="feature-title">Email Authentication</h3>
-                <p class="feature-description">Users authenticate using their email address instead of usernames, providing a more familiar and modern login experience.</p>
+        <div class="home-security-grid">
+            <div class="home-security-card">
+                <span class="home-security-icon">&#x1F6E1;&#xFE0F;</span>
+                <h3 class="home-security-title">Account Protection</h3>
+                <p class="home-security-text">
+                    Automated brute-force defense, secure password hashing, and suspicious login detection protect every account.
+                </p>
             </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">&#x1F512;</div>
-                <h3 class="feature-title">Secure Sessions</h3>
-                <p class="feature-description">Built-in session management with secure, persistent login and automatic session expiry for enhanced security.</p>
+            <div class="home-security-card">
+                <span class="home-security-icon">&#x1F4F1;</span>
+                <h3 class="home-security-title">Session Visibility</h3>
+                <p class="home-security-text">
+                    Users see every active session, can revoke access instantly, and receive alerts for new device logins.
+                </p>
             </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">&#x1F464;</div>
-                <h3 class="feature-title">Custom User Profiles</h3>
-                <p class="feature-description">Extendable user model with support for profile pictures, phone numbers, and custom fields tailored to your application.</p>
+            <div class="home-security-card">
+                <span class="home-security-icon">&#x1F4CA;</span>
+                <h3 class="home-security-title">Login Activity</h3>
+                <p class="home-security-text">
+                    Complete audit history of authentication events with IP address, browser, OS, and device details.
+                </p>
             </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">&#x1F512;</div>
-                <h3 class="feature-title">Password Reset</h3>
-                <p class="feature-description feature-coming-soon">Reset forgotten passwords securely via email. <span class="coming-soon-badge">Coming Soon</span></p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">&#x2709;</div>
-                <h3 class="feature-title">Email Verification</h3>
-                <p class="feature-description feature-coming-soon">Verify user email addresses during registration for trusted accounts. <span class="coming-soon-badge">Coming Soon</span></p>
-            </div>
-
-            <div class="feature-card">
-                <div class="feature-icon">&#x1F526;</div>
-                <h3 class="feature-title">RESTful API</h3>
-                <p class="feature-description feature-coming-soon">Expose authentication endpoints via a REST API for use in mobile and SPA applications. <span class="coming-soon-badge">Coming Soon</span></p>
+            <div class="home-security-card">
+                <span class="home-security-icon">&#x1F6A8;</span>
+                <h3 class="home-security-title">Threat Defense</h3>
+                <p class="home-security-text">
+                    Real-time risk scoring, security notifications, and emergency controls reduce exposure from compromised accounts.
+                </p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="tech-section">
-    <div class="tech-container">
-        <h2 class="tech-title">Built With</h2>
-        <p class="tech-subtitle">Modern technologies powering this authentication system.</p>
+<!-- Developer -->
+<section class="home-developer">
+    <div class="home-section-container">
+        <div class="home-section-header">
+            <div class="home-section-label" style="color: #38bdf8;">Developer Ready</div>
+            <h2 class="home-section-title">API-first authentication</h2>
+            <p class="home-section-subtitle">
+                Integrate Authentication Hub into mobile apps, SPAs, and backend services.
+            </p>
+        </div>
 
-        <div class="tech-grid">
-            <div class="tech-item">
-                <span class="tech-icon">&#128021;</span>
-                <span class="tech-name">Python</span>
+        <div class="home-developer-grid">
+            <div class="home-developer-card">
+                <span class="home-developer-icon">&#x1F4F1;</span>
+                <h3 class="home-developer-title">JWT Authentication</h3>
+                <p class="home-developer-text">
+                    Email-based login returning access and refresh tokens with configurable lifetimes and rotation.
+                </p>
+                <div class="home-code">
+                    POST <span>/api/v1/auth/token/</span>
+                </div>
             </div>
 
-            <div class="tech-item">
-                <span class="tech-icon">&#127793;</span>
-                <span class="tech-name">Django</span>
+            <div class="home-developer-card">
+                <span class="home-developer-icon">&#x1F4CB;</span>
+                <h3 class="home-developer-title">Interactive Docs</h3>
+                <p class="home-developer-text">
+                    Swagger UI and ReDoc let developers explore endpoints, test requests, and inspect schemas.
+                </p>
+                <div class="home-code">
+                    <span>/api/v1/docs/</span> &middot; <span>/api/v1/redoc/</span>
+                </div>
             </div>
 
-            <div class="tech-item">
-                <span class="tech-icon">&#129658;</span>
-                <span class="tech-name">SQLite</span>
-                <span class="tech-note">(PostgreSQL Ready)</span>
-            </div>
-
-            <div class="tech-item">
-                <span class="tech-icon">&#128274;</span>
-                <span class="tech-name">Django Authentication</span>
-            </div>
-
-            <div class="tech-item">
-                <span class="tech-icon">&#127979;</span>
-                <span class="tech-name">HTML5</span>
-            </div>
-
-            <div class="tech-item">
-                <span class="tech-icon">&#127979;</span>
-                <span class="tech-name">CSS3</span>
-            </div>
-
-            <div class="tech-item">
-                <span class="tech-icon">&#9889;</span>
-                <span class="tech-name">JavaScript</span>
-            </div>
-
-            <div class="tech-item">
-                <span class="tech-icon">&#128172;</span>
-                <span class="tech-name">Git &amp; GitHub</span>
+            <div class="home-developer-card">
+                <span class="home-developer-icon">&#x1F504;</span>
+                <h3 class="home-developer-title">Token Management</h3>
+                <p class="home-developer-text">
+                    Refresh, verify, and revoke tokens through first-class endpoints with server-side blacklisting.
+                </p>
+                <div class="home-code">
+                    refresh &middot; verify &middot; logout
+                </div>
             </div>
         </div>
     </div>
 </section>
 
-<section class="footer-cta">
-    <div class="footer-cta-container">
-        <h2 class="footer-cta-title">Ready to Get Started?</h2>
-        <p class="footer-cta-text">Join thousands of developers using Authentication Hub for their projects.</p>
-        <a href="{% url 'accounts:register' %}" class="btn btn-primary btn-lg">Create Your Account</a>
+<!-- Trust -->
+<section class="home-trust">
+    <div class="home-section-container">
+        <div class="home-section-header">
+            <div class="home-section-label">Platform Status</div>
+            <h2 class="home-section-title">What is available today</h2>
+            <p class="home-section-subtitle">
+                Authentication Hub is actively developed. These capabilities are live.
+            </p>
+        </div>
+
+        <div class="home-trust-grid">
+            <div class="home-trust-item">
+                <div class="home-trust-icon">&#x2713;</div>
+                <div class="home-trust-content">
+                    <div class="home-trust-title">Authentication</div>
+                    <p class="home-trust-text">Email-based login with secure sessions</p>
+                </div>
+            </div>
+
+            <div class="home-trust-item">
+                <div class="home-trust-icon">&#x2713;</div>
+                <div class="home-trust-content">
+                    <div class="home-trust-title">Email Verification</div>
+                    <p class="home-trust-text">Token-based email confirmation</p>
+                </div>
+            </div>
+
+            <div class="home-trust-item">
+                <div class="home-trust-icon">&#x2713;</div>
+                <div class="home-trust-content">
+                    <div class="home-trust-title">Password Recovery</div>
+                    <p class="home-trust-text">Secure reset via email tokens</p>
+                </div>
+            </div>
+
+            <div class="home-trust-item">
+                <div class="home-trust-icon">&#x2713;</div>
+                <div class="home-trust-content">
+                    <div class="home-trust-title">Session Security</div>
+                    <p class="home-trust-text">Active sessions, revocation, idle timeout</p>
+                </div>
+            </div>
+
+            <div class="home-trust-item">
+                <div class="home-trust-icon">&#x2713;</div>
+                <div class="home-trust-content">
+                    <div class="home-trust-title">Threat Protection</div>
+                    <p class="home-trust-text">Brute-force blocking and risk scoring</p>
+                </div>
+            </div>
+
+            <div class="home-trust-item">
+                <div class="home-trust-icon">&#x2713;</div>
+                <div class="home-trust-content">
+                    <div class="home-trust-title">API Authentication</div>
+                    <p class="home-trust-text">JWT tokens with interactive docs</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Footer CTA -->
+<section class="home-footer-cta">
+    <div class="home-footer-cta-container">
+        <h2 class="home-footer-cta-title">Ready to get started?</h2>
+        <p class="home-footer-cta-text">
+            Create an account or explore the developer API.
+        </p>
+        <div class="home-hero-actions" style="justify-content: center;">
+            {% if user.is_authenticated %}
+                <a href="{% url 'accounts:dashboard' %}" class="btn btn-primary">Go to Dashboard</a>
+            {% else %}
+                <a href="{% url 'accounts:register' %}" class="btn btn-primary">Create Account</a>
+                <a href="{% url 'accounts:login' %}" class="btn btn-outline" style="border-color: rgba(255,255,255,0.4); color: #ffffff;">Sign In</a>
+            {% endif %}
+        </div>
     </div>
 </section>
 {% endblock %}
