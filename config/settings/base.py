@@ -187,6 +187,9 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Ensure the logs directory exists for local development file logging.
+os.makedirs(BASE_DIR / 'logs', exist_ok=True)
+
 # ---------------------------------------------------------------------------
 # Logging configuration
 # ---------------------------------------------------------------------------
