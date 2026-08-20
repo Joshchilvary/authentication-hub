@@ -1,0 +1,10 @@
+/*
+ * Design System - Main Entrypoint
+ * Imports and bundles all component styles.
+ * Load this file only in your HTML <head>.
+ */
+
+@import "./variables.css";
+@import "./base.css";
+@import "./components.css";
+@import "./forms.css";

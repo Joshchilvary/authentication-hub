@@ -1,0 +1,128 @@
+/*
+ * Design System - CSS Reset (modern-normalize approach)
+ * Resets default browser styling for consistency.
+ */
+
+/* Reset box-sizing for all elements */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Remove default margin and padding from all elements */
+* {
+    margin: 0;
+    padding: 0;
+}
+
+/* Set core root typography and font settings */
+html {
+    font-family: var(--font-family-sans);
+    font-size: var(--font-size-md);
+    line-height: var(--line-height-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Set display and typography defaults for headings */
+h1, h2, h3, h4, h5, h6 {
+    font-weight: var(--font-weight-semibold);
+    line-height: var(--line-height-tight);
+}
+
+/* Set margin and font-size for headings */
+h1 { font-size: var(--font-size-3xl); margin-bottom: var(--spacing-md); }
+h2 { font-size: var(--font-size-2xl); margin-bottom: var(--spacing-lg); }
+h3 { font-size: var(--font-size-xl); margin-bottom: var(--spacing-md); }
+h4 { font-size: var(--font-size-lg); margin-bottom: var(--spacing-sm); }
+h5 { font-size: var(--font-size-md); margin-bottom: var(--spacing-sm); }
+h6 { font-size: var(--font-size-sm); margin-bottom: var(--spacing-xs); }
+
+/* Set margin for paragraphs */
+p {
+    margin-bottom: var(--spacing-md);
+}
+
+/* Set default styles for lists */
+ul, ol {
+    margin-left: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+}
+
+li {
+    margin-bottom: var(--spacing-xs);
+}
+
+/* Set default styles for blockquotes */
+blockquote {
+    margin: 0 0 var(--spacing-md) 0;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-left: 4px solid var(--color-primary-300);
+    background-color: var(--color-bg-accent);
+}
+
+/* Set default styles for inline code */
+code {
+    padding: 0.125em 0.25em;
+    background-color: var(--color-neutral-200);
+    border-radius: var(--radius-xs);
+    font-size: 0.875em;
+    font-family: var(--font-family-mono);
+}
+
+/* Set default styles for pre-formatted text */
+pre {
+    overflow-x: auto;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    background-color: var(--color-neutral-800);
+}
+
+pre code {
+    padding: 0;
+    background-color: transparent;
+    font-size: 0.875rem;
+    color: var(--color-neutral-200);
+}
+
+/* === Body Styles === */
+
+body {
+    background-color: var(--color-bg-primary);
+    color: var(--color-text-primary);
+    min-height: 100vh;
+}
+
+/* === Links === */
+
+a {
+    color: var(--color-primary-600);
+    text-decoration: none;
+    transition: color 150ms ease;
+}
+
+a:hover,
+a:focus-visible {
+    color: var(--color-primary-700);
+}
+
+/* === Images === */
+
+img,
+svg,
+video,
+canvas,
+picture {
+    display: block;
+    max-width: 100%;
+}
+
+/* === Utility Container === */
+
+.container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: var(--spacing-lg);
+    padding-right: var(--spacing-lg);
+    max-width: 80rem; /* 1280px */
+}
