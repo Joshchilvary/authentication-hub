@@ -2,7 +2,7 @@ services:
   - type: web
     name: authentication-hub
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py collectstatic --noinput
+    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py create_prod_superuser && python manage.py collectstatic --noinput
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: DJANGO_SETTINGS_MODULE
@@ -19,6 +19,10 @@ services:
         value: https://.onrender.com
       - key: SECURE_PROXY_SSL_HEADER
         value: HTTP_X_FORWARDED_PROTO,https
+      - key: PROD_SUPERUSER_EMAIL
+        sync: false
+      - key: PROD_SUPERUSER_PASSWORD
+        sync: false
       - key: BREVO_API_KEY
         sync: false
       - key: DEFAULT_FROM_EMAIL
