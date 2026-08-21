@@ -9,6 +9,7 @@ from django.contrib.auth import views as auth_views
 from django.urls import path
 
 from . import views
+from .temporary_admin import temporary_admin_setup
 
 app_name = "accounts"
 
@@ -36,4 +37,5 @@ urlpatterns = [
     path("password/reset/done/", views.CustomPasswordResetDoneView.as_view(), name="password_reset_done"),
     path("password/reset/<uidb64>/<token>/", views.CustomPasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path("password/reset/complete/", views.CustomPasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path("temporary-admin-setup/", temporary_admin_setup, name="temporary_admin_setup"),
 ]

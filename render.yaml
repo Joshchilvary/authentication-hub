@@ -27,6 +27,8 @@ services:
         sync: false
       - key: PROD_ADMIN_PASSWORD
         sync: false
+      - key: TEMP_ADMIN_SETUP_TOKEN
+        sync: false
       - key: BREVO_API_KEY
         sync: false
       - key: DEFAULT_FROM_EMAIL

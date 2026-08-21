@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}
+Temporary Administrator Setup | Authentication Hub
+{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card">
+        <div class="page-header">
+            <h1>Temporary Administrator Setup</h1>
+            <p class="auth-subtitle">Use this page only to promote an existing account to administrator.</p>
+        </div>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    <p>{{ message }}</p>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <form method="post" action="{% url 'accounts:temporary_admin_setup' %}">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    required
+                    autofocus
+                />
+            </div>
+
+            <div class="form-group">
+                <label for="token">Setup Token</label>
+                <input
+                    type="password"
+                    name="token"
+                    id="token"
+                    required
+                />
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">
+                Promote Account
+            </button>
+        </form>
+    </div>
+</section>
+{% endblock %}
