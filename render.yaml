@@ -2,7 +2,7 @@ services:
   - type: web
     name: authentication-hub
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py create_prod_superuser && python manage.py collectstatic --noinput
+    buildCommand: pip install -r requirements.txt && python manage.py migrate --noinput && python manage.py reset_prod_admin_password && python manage.py create_prod_superuser && python manage.py collectstatic --noinput
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: DJANGO_SETTINGS_MODULE
@@ -22,6 +22,10 @@ services:
       - key: PROD_SUPERUSER_EMAIL
         sync: false
       - key: PROD_SUPERUSER_PASSWORD
+        sync: false
+      - key: PROD_ADMIN_EMAIL
+        sync: false
+      - key: PROD_ADMIN_PASSWORD
         sync: false
       - key: BREVO_API_KEY
         sync: false
