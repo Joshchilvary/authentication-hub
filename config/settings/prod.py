@@ -147,21 +147,13 @@ SESSION_COOKIE_SAMESITE = "Lax"
 # so that X-Forwarded-For headers are only trusted from known proxies.
 
 # ---------------------------------------------------------------------------
-# Production email delivery via Brevo SMTP
+# Production email delivery via Brevo HTTP API
 # ---------------------------------------------------------------------------
-# Production uses Brevo SMTP for actual email delivery.
+# Production uses Brevo's transactional email API over HTTPS.
 # Local development continues to use the console backend from base.py.
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp-relay.brevo.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() == 'true'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
+BREVO_API_TIMEOUT = int(os.environ.get('BREVO_API_TIMEOUT', 10))
 
 _default_from_email = os.environ.get('DEFAULT_FROM_EMAIL', '')
-if not _default_from_email:
-    raise ImproperlyConfigured(
-        "The DEFAULT_FROM_EMAIL environment variable must be set to your "
-        "verified Brevo sender address in production."
-    )
-DEFAULT_FROM_EMAIL = _default_from_email
+if _default_from_email:
+    DEFAULT_FROM_EMAIL = _default_from_email

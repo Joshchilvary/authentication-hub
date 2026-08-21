@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
 from django.contrib.auth.models import update_last_login
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
+from accounts.email_service import send_brevo_email
 from django.template.loader import render_to_string
 from django.utils import timezone
 
@@ -363,12 +363,12 @@ def _record_login_history_api(request, user, email, ip_address, user_agent_strin
                 plain_message = render_to_string("accounts/emails/new_login_notification.txt", context)
                 html_message = render_to_string("accounts/emails/new_login_notification.html", context)
 
-                send_mail(
+                send_brevo_email(
                     subject=subject,
-                    message=plain_message,
-                    from_email=None,
-                    recipient_list=[user.email],
-                    html_message=html_message,
+                    recipient_email=user.email,
+                    recipient_name=user.get_full_name() or user.email,
+                    html_content=html_message,
+                    plain_text_content=plain_message,
                 )
             except Exception:
                 import logging

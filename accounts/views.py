@@ -15,7 +15,7 @@ from django.conf import settings
 from datetime import timedelta
 from django.core.paginator import Paginator
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
+from .email_service import send_brevo_email
 from django.shortcuts import render, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse_lazy
@@ -222,12 +222,11 @@ def register(request):
                 "token": email_verification_token.make_token(user),
             })
 
-            send_mail(
+            send_brevo_email(
                 subject=subject,
-                message=message,
-                from_email=None,
-                recipient_list=[user.email],
-                html_message=message,
+                recipient_email=user.email,
+                recipient_name=user.get_full_name() or user.email,
+                html_content=message,
             )
 
             messages.success(request, "Your account has been created successfully. Please check your email to verify your account.")
@@ -315,12 +314,12 @@ def _record_login_history(request, user, form):
                 plain_message = render_to_string("accounts/emails/new_login_notification.txt", context)
                 html_message = render_to_string("accounts/emails/new_login_notification.html", context)
 
-                send_mail(
+                send_brevo_email(
                     subject=subject,
-                    message=plain_message,
-                    from_email=None,
-                    recipient_list=[user.email],
-                    html_message=html_message,
+                    recipient_email=user.email,
+                    recipient_name=user.get_full_name() or user.email,
+                    html_content=html_message,
+                    plain_text_content=plain_message,
                 )
             except Exception:
                 import logging
@@ -828,12 +827,12 @@ class CustomPasswordChangeView(LoginRequiredMixin, PasswordChangeView):
             plain_message = render_to_string("accounts/emails/password_changed_notification.txt", context)
             html_message = render_to_string("accounts/emails/password_changed_notification.html", context)
 
-            send_mail(
+            send_brevo_email(
                 subject=subject,
-                message=plain_message,
-                from_email=None,
-                recipient_list=[user.email],
-                html_message=html_message,
+                recipient_email=user.email,
+                recipient_name=user.get_full_name() or user.email,
+                html_content=html_message,
+                plain_text_content=plain_message,
             )
         except Exception:
             import logging
@@ -1289,13 +1288,18 @@ def resend_verification(request):
         "token": email_verification_token.make_token(user),
     })
 
-    send_mail(
+    email_sent = send_brevo_email(
         subject=subject,
-        message=message,
-        from_email=None,
-        recipient_list=[user.email],
-        html_message=message,
+        recipient_email=user.email,
+        recipient_name=user.get_full_name() or user.email,
+        html_content=message,
     )
 
-    messages.success(request, "A new verification email has been sent. Please check your inbox.")
+    if email_sent:
+        messages.success(request, "A new verification email has been sent. Please check your inbox.")
+    else:
+        messages.error(
+            request,
+            "We could not send the verification email right now. Please try again later or contact support if the problem continues.",
+        )
     return redirect("accounts:dashboard")
